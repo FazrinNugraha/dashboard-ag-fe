@@ -1,0 +1,94 @@
+/* Select (filter-dropdown) — sesuai DESIGN.md Miro */
+.select-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 14px; /* body-sm-medium */
+  font-weight: 500;
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--rounded-full);
+  padding: var(--spacing-xs) var(--spacing-md);
+  height: 36px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.select-trigger:hover {
+  background-color: var(--color-surface);
+}
+
+.select-trigger.open {
+  border: 2px solid var(--color-brand-blue);
+  padding: calc(var(--spacing-xs) - 1px) calc(var(--spacing-md) - 1px);
+}
+
+.select-trigger-label.placeholder {
+  color: var(--color-steel);
+}
+
+.select-chevron {
+  color: var(--color-steel);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.select-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Menu popup — shadow level 4 (modal) */
+.select-menu {
+  background-color: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--rounded-md);
+  box-shadow: var(--shadow-modal);
+  padding: var(--spacing-xxs);
+  z-index: 1100;
+  max-height: 320px;
+  overflow-y: auto;
+  animation: select-menu-in 0.15s ease;
+}
+
+.select-menu.drop-up {
+  transform-origin: bottom;
+}
+
+@keyframes select-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.select-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 14px; /* body-sm */
+  color: var(--color-ink);
+  padding: 10px var(--spacing-md);
+  border-radius: var(--rounded-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.select-item:hover {
+  background-color: var(--color-surface);
+}
+
+.select-item.selected {
+  background-color: var(--color-surface);
+  color: var(--color-brand-blue);
+  font-weight: 500;
+}

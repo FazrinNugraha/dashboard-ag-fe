@@ -10,11 +10,10 @@ import { LoginPage } from './pages/LoginPage';
 import { ReportPage } from './pages/ReportPage';
 import { ReceivablesPage } from './pages/ReceivablesPage';
 import { format } from 'date-fns';
-import { id } from 'date-fns/locale';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  
+
   // Fungsi untuk mengecek sesi (cookie)
   const checkSession = async () => {
     try {
@@ -37,31 +36,40 @@ function App() {
   const [activeTab, setActiveTab] = useState('Ringkasan Utama');
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
 
-  
+
   // State untuk filter bulan (default bulan ini: "YYYY-MM")
-  const [currentMonth] = useState(() => format(new Date(), 'yyyy-MM'));
+  const [currentMonth, setCurrentMonth] = useState(() => format(new Date(), 'yyyy-MM'));
+  const [projectMonth, setProjectMonth] = useState(''); // Default kosong (Lihat Semua)
 
   // Ambil data dari backend
   const { data: dashboardData, loading: dashLoading } = useDashboard(currentMonth);
-  const { projects, loading: projLoading } = useProjects(currentMonth);
+  const { projects } = useProjects(projectMonth);
+
+  // Judul + deskripsi per tab (ditampilkan sejajar dengan Sinkronkan Sheets di header)
+  const pageMeta: Record<string, { title: string; subtitle: string }> = {
+    'Ringkasan Utama': { title: 'Ringkasan Keuangan', subtitle: 'Pantau metrik utama per bulan.' },
+    'Proyek & Klien': { title: 'Daftar Proyek & Klien', subtitle: 'Daftar semua proyek klien yang berjalan dan riwayat bulan sebelumnya.' },
+    'Pantau Piutang': { title: 'Pantau Piutang', subtitle: 'Monitoring sisa tagihan klien yang belum lunas sepenuhnya.' },
+    'Scan Invoice (Masuk)': { title: 'Scan Invoice Masuk (PDF)', subtitle: 'Unggah file PDF invoice untuk diekstrak secara otomatis oleh AI.' },
+    'Catat Pengeluaran': { title: 'Catat Pengeluaran Baru', subtitle: 'Masukkan rincian pengeluaran kas operasional atau proyek.' },
+    'Laporan (Sheets)': { title: 'Pusat Laporan', subtitle: 'Unduh laporan keuangan otomatis dalam bentuk Excel atau PDF, atau akses langsung ke Google Sheets.' },
+  };
+
+  const meta = pageMeta[activeTab] ?? pageMeta['Ringkasan Utama'];
 
   // Fungsi untuk me-render konten berdasarkan tab yang aktif
   const renderContent = () => {
     if (activeTab === 'Proyek & Klien') {
       return (
-        <>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <div>
-              <h2 style={{ fontSize: '24px', fontWeight: 600, color: 'var(--color-ink)' }}>Daftar Proyek & Klien</h2>
-              <p style={{ fontSize: '14px', color: 'var(--color-slate)' }}>Daftar semua proyek klien yang berjalan dan riwayat bulan sebelumnya.</p>
-            </div>
-            <button className="btn btn-primary" onClick={() => setIsProjectModalOpen(true)}>+ Proyek Baru</button>
-          </div>
-          <ProjectTable projects={projects} />
-        </>
+        <ProjectTable
+          projects={projects}
+          filterMonth={projectMonth}
+          onFilterMonthChange={setProjectMonth}
+          onAddProject={() => setIsProjectModalOpen(true)}
+        />
       );
     }
-    
+
     if (activeTab === 'Pantau Piutang') {
       return <ReceivablesPage />;
     }
@@ -69,7 +77,7 @@ function App() {
     if (activeTab === 'Scan Invoice (Masuk)') {
       return <ScanInvoicePage />;
     }
-    
+
     if (activeTab === 'Catat Pengeluaran') {
       return <ExpensePage />;
     }
@@ -87,17 +95,21 @@ function App() {
       );
     }
 
-    const kpi = dashboardData?.kpi || {
-      omzet: { value: 0 },
-      kas_masuk: { value: 0 },
-      pengeluaran: { value: 0 },
-    };
+    const kpi = dashboardData?.kpi || {};
+    const allTime = dashboardData?.all_time || { omzet: 0, jumlah_proyek: 0 };
+    const trend = dashboardData?.trend || [];
+    const expenseBreakdown = dashboardData?.expense_breakdown || [];
 
     return (
       <div style={{ paddingTop: '8px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 600, color: 'var(--color-ink)' }}>Ringkasan Keuangan</h2>
-        <p style={{ fontSize: '14px', color: 'var(--color-slate)', marginBottom: '24px' }}>Oktober 2026</p>
-        <StatRow kpi={kpi} />
+        <StatRow
+          kpi={kpi}
+          allTime={allTime}
+          trend={trend}
+          expenseBreakdown={expenseBreakdown}
+          currentMonth={currentMonth}
+          onMonthChange={setCurrentMonth}
+        />
       </div>
     );
   };
@@ -111,7 +123,12 @@ function App() {
   }
 
   return (
-    <Layout activeTab={activeTab} onTabChange={setActiveTab}>
+    <Layout
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      pageTitle={meta.title}
+      pageSubtitle={meta.subtitle}
+    >
       {renderContent()}
       {isProjectModalOpen && <NewProjectModal onClose={() => setIsProjectModalOpen(false)} />}
     </Layout>

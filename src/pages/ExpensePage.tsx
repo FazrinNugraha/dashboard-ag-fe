@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
 
 /**
  * Halaman Catat Pengeluaran
@@ -58,12 +59,7 @@ export const ExpensePage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 600 }}>Catat Pengeluaran Baru</h2>
-        <p style={{ color: 'var(--color-slate)' }}>Masukkan rincian pengeluaran kas operasional atau proyek.</p>
-      </div>
-
+    <div style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '8px' }}>
       <Card variant="base">
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--color-on-primary)', backgroundColor: 'var(--color-error)', padding: '12px', borderRadius: '8px' }}>{error}</div>}
@@ -81,18 +77,17 @@ export const ExpensePage: React.FC = () => {
           
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Kategori</label>
-            <select 
-              className="input input-text"
-              required
-              value={formData.kategori} 
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({ ...formData, kategori: e.target.value })} 
-            >
-              <option value="BAHAN_BAKU">Bahan Baku (Aluminium, Kaca, dll)</option>
-              <option value="AKSESORIS">Aksesoris & Hardware</option>
-              <option value="UPAH">Upah Tukang / Pekerja</option>
-              <option value="OPERASIONAL">Operasional (Bensin, Makan, dll)</option>
-              <option value="LAINNYA">Lain-lain</option>
-            </select>
+            <Select
+              value={formData.kategori}
+              onChange={(val) => setFormData({ ...formData, kategori: val })}
+              options={[
+                { value: 'BAHAN_BAKU', label: 'Bahan Baku (Aluminium, Kaca, dll)' },
+                { value: 'AKSESORIS', label: 'Aksesoris & Hardware' },
+                { value: 'UPAH', label: 'Upah Tukang / Pekerja' },
+                { value: 'OPERASIONAL', label: 'Operasional (Bensin, Makan, dll)' },
+                { value: 'LAINNYA', label: 'Lain-lain' },
+              ]}
+            />
           </div>
 
           <div>

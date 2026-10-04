@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Select } from '../components/ui/Select';
 
 export const ReportPage: React.FC = () => {
   const [spreadsheetUrl, setSpreadsheetUrl] = useState('');
@@ -48,29 +49,21 @@ export const ReportPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 600, color: 'var(--color-ink)' }}>Pusat Laporan</h2>
-        <p style={{ color: 'var(--color-slate)', marginTop: '4px' }}>
-          Unduh laporan keuangan otomatis dalam bentuk Excel atau PDF, atau akses langsung ke Google Sheets.
-        </p>
-      </div>
-
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '40px', paddingTop: '8px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
         
         {/* Pengaturan Filter */}
         <Card variant="base" style={{ padding: '24px' }}>
           <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Filter Laporan</h3>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <select 
-              className="input input-text"
+            <Select
               value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              style={{ width: 'auto', minWidth: '150px' }}
-            >
-              <option value="month">Bulanan</option>
-              <option value="year">Tahunan</option>
-            </select>
+              onChange={setPeriod}
+              options={[
+                { value: 'month', label: 'Bulanan' },
+                { value: 'year', label: 'Tahunan' },
+              ]}
+            />
 
             {period === 'month' ? (
               <input 
@@ -116,7 +109,7 @@ export const ReportPage: React.FC = () => {
 
           {/* Card Export PDF */}
           <Card variant="rose" style={{ padding: '32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }} hoverEffect>
-            <div style={{ width: '64px', height: '64px', backgroundColor: 'var(--color-canvas)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', fontSize: '32px', color: 'var(--color-rose-deep)' }}>
+            <div style={{ width: '64px', height: '64px', backgroundColor: 'var(--color-canvas)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', fontSize: '32px', color: 'var(--color-moss-dark)' }}>
               <i className="ph ph-file-pdf"></i>
             </div>
             <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>Laporan PDF</h3>
