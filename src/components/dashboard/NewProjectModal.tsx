@@ -62,21 +62,22 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
     <div style={{ 
       position: 'fixed', 
       top: 0, left: 0, right: 0, bottom: 0, 
-      backgroundColor: 'rgba(0,0,0,0.5)', 
+      backgroundColor: 'rgba(5, 0, 56, 0.45)', 
+      backdropFilter: 'blur(4px)',
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
       zIndex: 1000,
       padding: '20px'
     }}>
-      <Card variant="base" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', padding: '32px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 600 }}>Tambah Proyek Baru</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'var(--color-slate)' }}>&times;</button>
+      <Card variant="base" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--spacing-xxl)', boxShadow: 'var(--shadow-modal)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 500 }}>Tambah Proyek Baru</h2>
+          <button onClick={onClose} aria-label="Tutup" style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'var(--color-slate)', lineHeight: 1 }}>&times;</button>
         </div>
 
         {error && (
-          <div style={{ padding: '12px', backgroundColor: 'var(--color-error)', color: 'white', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ padding: 'var(--spacing-sm)', backgroundColor: 'var(--color-error)', color: 'var(--color-coral-dark)', borderRadius: 'var(--rounded-md)', marginBottom: 'var(--spacing-md)' }}>
             {error}
           </div>
         )}
