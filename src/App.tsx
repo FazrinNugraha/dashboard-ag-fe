@@ -1,16 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from './components/layout/Layout';
 import { StatRow } from './components/dashboard/StatRow';
 import { ProjectTable } from './components/dashboard/ProjectTable';
+import { NewProjectModal } from './components/dashboard/NewProjectModal';
 import { useDashboard, useProjects } from './hooks/useApi';
 import { ExpensePage } from './pages/ExpensePage';
 import { ScanInvoicePage } from './pages/ScanInvoicePage';
+import { LoginPage } from './pages/LoginPage';
+import { ReportPage } from './pages/ReportPage';
+import { ReceivablesPage } from './pages/ReceivablesPage';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  
+  // Fungsi untuk mengecek sesi (cookie)
+  const checkSession = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/auth/me', { credentials: 'include' });
+      if (res.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
   // State untuk navigasi tab
   const [activeTab, setActiveTab] = useState('Ringkasan Utama');
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+
   
   // State untuk filter bulan (default bulan ini: "YYYY-MM")
   const [currentMonth] = useState(() => format(new Date(), 'yyyy-MM'));
@@ -29,7 +55,7 @@ function App() {
               <h2 style={{ fontSize: '24px', fontWeight: 600, color: 'var(--color-ink)' }}>Daftar Proyek & Klien</h2>
               <p style={{ fontSize: '14px', color: 'var(--color-slate)' }}>Daftar semua proyek klien yang berjalan dan riwayat bulan sebelumnya.</p>
             </div>
-            <button className="btn btn-primary">+ Proyek Baru</button>
+            <button className="btn btn-primary" onClick={() => setIsProjectModalOpen(true)}>+ Proyek Baru</button>
           </div>
           <ProjectTable projects={projects} />
         </>
@@ -37,11 +63,7 @@ function App() {
     }
     
     if (activeTab === 'Pantau Piutang') {
-      return (
-        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-slate)' }}>
-          Halaman Pantau Piutang (Belum Diimplementasi)
-        </div>
-      );
+      return <ReceivablesPage />;
     }
 
     if (activeTab === 'Scan Invoice (Masuk)') {
@@ -53,11 +75,7 @@ function App() {
     }
 
     if (activeTab === 'Laporan (Sheets)') {
-      return (
-        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-slate)' }}>
-          Halaman Laporan (Belum Diimplementasi)
-        </div>
-      );
+      return <ReportPage />;
     }
 
     // Default: Ringkasan Utama
@@ -84,9 +102,18 @@ function App() {
     );
   };
 
+  if (isAuthenticated === null) {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Memuat...</div>;
+  }
+
+  if (isAuthenticated === false) {
+    return <LoginPage onSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <Layout activeTab={activeTab} onTabChange={setActiveTab}>
       {renderContent()}
+      {isProjectModalOpen && <NewProjectModal onClose={() => setIsProjectModalOpen(false)} />}
     </Layout>
   );
 }

@@ -6,7 +6,9 @@ export const ScanInvoicePage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleUpload = async () => {
     if (!file) return;
@@ -27,10 +29,16 @@ export const ScanInvoicePage: React.FC = () => {
       });
 
       if (!res.ok) {
+        let errMsg = 'Gagal mengekstrak invoice.';
+        try {
+          const errJson = await res.json();
+          errMsg = errJson.error?.message || errJson.detail?.message || errJson.detail || errMsg;
+        } catch (e) {}
+        
         if (res.status === 401 || res.status === 403) {
-           throw new Error('Fitur ini dilindungi. Anda belum login atau token Anda kadaluarsa.');
+           errMsg = 'Fitur ini dilindungi. Anda belum login atau token Anda kadaluarsa.';
         }
-        throw new Error('Gagal mengekstrak invoice.');
+        throw new Error(errMsg);
       }
 
       const json = await res.json();
@@ -39,6 +47,54 @@ export const ScanInvoicePage: React.FC = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!previewData) return;
+    setSaving(true);
+    setError('');
+    
+    try {
+      const payload = { 
+        id_proyek: previewData.nomor_invoice,
+        tanggal: previewData.tanggal,
+        nama_klien: previewData.nama_klien,
+        alamat: previewData.alamat,
+        pekerjaan: previewData.pekerjaan,
+        subtotal: previewData.subtotal,
+        diskon: previewData.diskon,
+        dp: previewData.dp || 0 
+      };
+      
+      const res = await fetch('http://localhost:8000/api/v1/projects', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-requested-with': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json();
+        throw new Error(errJson.detail?.message || errJson.detail || 'Gagal menyimpan proyek');
+      }
+
+      setSuccess(true);
+      setPreviewData(null);
+      setFile(null);
+      
+      // Auto redirect to home after 2 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -53,6 +109,12 @@ export const ScanInvoicePage: React.FC = () => {
         {error && (
           <div style={{ color: 'var(--color-on-primary)', backgroundColor: 'var(--color-error)', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div style={{ color: 'var(--color-on-primary)', backgroundColor: 'var(--color-success)', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
+            Data berhasil disimpan! Mengalihkan ke halaman utama...
           </div>
         )}
 
@@ -94,8 +156,11 @@ export const ScanInvoicePage: React.FC = () => {
               {JSON.stringify(previewData, null, 2)}
             </pre>
             
-            <div style={{ marginTop: '16px' }}>
-              <Button variant="yellow">Simpan ke Proyek (Draft)</Button>
+            <div style={{ marginTop: '16px', display: 'flex', gap: '12px' }}>
+              <Button variant="secondary" onClick={() => setPreviewData(null)}>Batal</Button>
+              <Button variant="yellow" onClick={handleSave} disabled={saving}>
+                {saving ? 'Menyimpan...' : 'Simpan sebagai Proyek Berjalan'}
+              </Button>
             </div>
           </div>
         )}

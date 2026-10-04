@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutDashboard, Users, CreditCard, Receipt, FileText, Settings } from 'lucide-react';
+import React, { useState } from 'react';
+import { LayoutDashboard, Users, CreditCard, Receipt, FileText, Settings, LogOut, RefreshCw } from 'lucide-react';
 import './Layout.css';
 
 interface LayoutProps {
@@ -14,6 +14,43 @@ interface LayoutProps {
  * Sangat gampang dibaca karena kita memisahkan list menu ke dalam array.
  */
 export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard', onTabChange }) => {
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('http://localhost:8000/api/v1/sync', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'x-requested-with': 'XMLHttpRequest' }
+      });
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        alert('Gagal menyinkronkan data.');
+      }
+    } catch (e) {
+      alert('Terjadi kesalahan jaringan.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch('http://localhost:8000/api/v1/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'x-requested-with': 'XMLHttpRequest' }
+      });
+      window.location.reload();
+    } catch (e) {
+      window.location.reload();
+    }
+  };
+
   const menus = [
     { name: 'Ringkasan Utama', icon: <LayoutDashboard size={20} /> },
     { name: 'Proyek & Klien', icon: <Users size={20} /> },
@@ -46,9 +83,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
         </nav>
 
         <div className="sidebar-footer">
-          <button className="nav-item">
-            <Settings size={20} />
-            <span>Pengaturan</span>
+          <button className="nav-item" onClick={handleLogout} disabled={isLoggingOut} style={{ color: '#d93025' }}>
+            <LogOut size={20} />
+            <span>{isLoggingOut ? 'Keluar...' : 'Keluar'}</span>
           </button>
         </div>
       </aside>
@@ -60,8 +97,20 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
             <h1>Ikhtisar Keuangan</h1>
             <p>Pantau arus kas dan proyek Anda secara real-time.</p>
           </div>
-          <div className="header-actions">
-             {/* Tempat untuk profile/logout dll */}
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+             <button 
+                onClick={handleSync} 
+                disabled={isSyncing}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-hairline-strong)',
+                  padding: '8px 16px', borderRadius: '24px', cursor: 'pointer',
+                  fontSize: '14px', fontWeight: 500, color: 'var(--color-ink)'
+                }}
+             >
+               <RefreshCw size={16} className={isSyncing ? "spin-animation" : ""} />
+               {isSyncing ? 'Menyinkronkan...' : 'Sinkronkan Sheets'}
+             </button>
              <div className="profile-circle">A</div>
           </div>
         </header>

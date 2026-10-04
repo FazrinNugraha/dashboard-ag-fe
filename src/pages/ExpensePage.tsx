@@ -45,7 +45,7 @@ export const ExpensePage: React.FC = () => {
            throw new Error('Anda belum login atau tidak memiliki akses (Harus Login)');
         }
         const errJson = await res.json();
-        throw new Error(errJson.detail?.message || errJson.detail || 'Terjadi kesalahan sistem');
+        throw new Error(errJson.error?.message || errJson.detail?.message || errJson.detail || 'Terjadi kesalahan sistem');
       }
 
       setMessage('Pengeluaran berhasil dicatat!');
