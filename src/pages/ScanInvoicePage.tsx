@@ -78,8 +78,18 @@ export const ScanInvoicePage: React.FC = () => {
       });
 
       if (!res.ok) {
-        const errJson = await res.json();
-        throw new Error(errJson.detail?.message || errJson.detail || 'Gagal menyimpan proyek');
+        let errMsg = 'Gagal menyimpan proyek';
+        try {
+          const errJson = await res.json();
+          const d = errJson.error?.details;
+          if (d) {
+            const detailStr = typeof d === 'string' ? d : JSON.stringify(d);
+            errMsg = `${errJson.error.message ?? errMsg} (${detailStr})`;
+          } else {
+            errMsg = errJson.error?.message || errJson.detail?.message || (typeof errJson.detail === 'string' ? errJson.detail : errMsg) || errMsg;
+          }
+        } catch (e) {}
+        throw new Error(errMsg);
       }
 
       setSuccess(true);
