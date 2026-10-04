@@ -99,15 +99,10 @@ export const ScanInvoicePage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 600 }}>Scan Invoice Masuk (PDF)</h2>
-        <p style={{ color: 'var(--color-slate)' }}>Unggah file PDF invoice untuk diekstrak secara otomatis oleh AI.</p>
-      </div>
-
+    <div style={{ maxWidth: '700px', margin: '0 auto', paddingTop: '8px' }}>
       <Card variant="base">
         {error && (
-          <div style={{ color: 'var(--color-on-primary)', backgroundColor: 'var(--color-error)', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ color: 'var(--color-coral-dark)', backgroundColor: 'var(--color-error)', padding: '12px', borderRadius: '8px', marginBottom: '16px' }}>
             {error}
           </div>
         )}
@@ -120,12 +115,13 @@ export const ScanInvoicePage: React.FC = () => {
 
         <div 
           style={{ 
-            border: '2px dashed var(--color-hairline-strong)', 
+            border: '2px dashed var(--color-brand-yellow-deep)', 
             padding: '40px', 
             textAlign: 'center',
             borderRadius: '12px',
             marginBottom: '24px',
-            backgroundColor: file ? 'var(--color-surface)' : 'transparent'
+            backgroundColor: file ? 'var(--color-surface-yellow)' : 'var(--color-surface-yellow)',
+            transition: 'background-color 0.2s ease'
           }}
         >
           <input 
