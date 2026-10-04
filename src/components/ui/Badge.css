@@ -1,0 +1,52 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-promo {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-primary);
+  border-radius: var(--rounded-full);
+  padding: 4px 10px;
+}
+
+.badge-success {
+  background-color: var(--color-success);
+  color: var(--color-on-primary);
+  border-radius: var(--rounded-full);
+  padding: 4px 10px;
+}
+
+.badge-tag-yellow {
+  background-color: var(--color-surface-yellow);
+  color: var(--color-yellow-dark);
+  border-radius: var(--rounded-full);
+  padding: 4px 10px;
+}
+
+.badge-tag-purple {
+  /* Di design.md purple menggunakan surface-pricing-featured + brand-blue */
+  background-color: #f5f3ff;
+  color: var(--color-brand-blue);
+  border-radius: var(--rounded-full);
+  padding: 4px 10px;
+}
+
+.badge-tag-coral {
+  background-color: var(--color-coral-light);
+  color: var(--color-coral-dark);
+  border-radius: var(--rounded-full);
+  padding: 4px 10px;
+}
+
+.badge-discount {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-primary);
+  border-radius: var(--rounded-sm);
+  padding: 2px 6px;
+}

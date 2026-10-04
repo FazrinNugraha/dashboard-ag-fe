@@ -1,0 +1,74 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: var(--rounded-full);
+}
+
+.btn:disabled {
+  background-color: var(--color-hairline);
+  color: var(--color-muted);
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+/* Ukuran */
+.btn-size-md {
+  font-size: 14px;
+  padding: 12px 24px;
+}
+.btn-size-sm {
+  font-size: 13px;
+  padding: 8px 16px;
+}
+
+/* Varian */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-charcoal);
+  transform: translateY(-1px);
+}
+
+.btn-yellow {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-primary);
+}
+.btn-yellow:hover:not(:disabled) {
+  background-color: var(--color-brand-yellow-deep);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline-strong);
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-surface);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-ink);
+  border-radius: var(--rounded-md); /* Khusus ghost tidak full pill */
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-surface);
+}
+
+.btn-icon {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  border: 1px solid var(--color-hairline);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--rounded-full);
+}
+.btn-icon:hover:not(:disabled) {
+  background-color: var(--color-surface);
+}

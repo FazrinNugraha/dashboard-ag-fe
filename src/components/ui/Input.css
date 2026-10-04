@@ -1,0 +1,40 @@
+.input {
+  box-sizing: border-box;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}
+
+.input-text {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-size: 16px; /* body-md */
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-hairline-strong);
+  height: 44px;
+  width: 100%;
+}
+.input-text:focus {
+  border: 2px solid var(--color-brand-blue);
+  /* kurangi padding 1px agar dimensi tidak goyang saat border jadi tebal */
+  padding: calc(var(--spacing-sm) - 1px) calc(var(--spacing-md) - 1px);
+}
+
+.input-search {
+  background-color: var(--color-surface);
+  color: var(--color-steel);
+  font-size: 14px; /* body-sm */
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: 1px solid var(--color-hairline);
+  height: 40px;
+  width: 100%;
+}
+.input-search:focus {
+  border-color: var(--color-hairline-strong);
+}

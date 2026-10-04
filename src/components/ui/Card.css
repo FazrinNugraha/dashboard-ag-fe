@@ -1,0 +1,59 @@
+.card {
+  box-sizing: border-box;
+}
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Base Card (Normal container) */
+.card-base {
+  background-color: var(--color-canvas);
+  border-radius: var(--rounded-xl);
+  padding: var(--spacing-xl);
+  border: 1px solid var(--color-hairline-soft);
+}
+
+/* Feature Cards (Large corners) */
+.card-feature {
+  background-color: var(--color-canvas);
+  border-radius: var(--rounded-xxxl);
+  padding: var(--spacing-xxl);
+  border: 1px solid var(--color-hairline-soft);
+}
+.card-yellow {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-primary);
+  border-radius: var(--rounded-xxxl);
+  padding: var(--spacing-xxl);
+}
+.card-teal {
+  background-color: var(--color-teal-light);
+  color: var(--color-primary);
+  border-radius: var(--rounded-xxxl);
+  padding: var(--spacing-xxl);
+}
+.card-coral {
+  background-color: var(--color-coral-light);
+  color: var(--color-primary);
+  border-radius: var(--rounded-xxxl);
+  padding: var(--spacing-xxl);
+}
+.card-rose {
+  background-color: var(--color-rose-light);
+  color: var(--color-primary);
+  border-radius: var(--rounded-xxxl);
+  padding: var(--spacing-xxl);
+}
+
+/* Stat Card (Transparent, for metrics) */
+.card-stat {
+  background-color: transparent;
+  color: var(--color-ink);
+  padding: var(--spacing-lg);
+  border-radius: var(--rounded-xl);
+}

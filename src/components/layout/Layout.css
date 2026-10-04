@@ -1,0 +1,130 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-surface);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background-color: var(--color-canvas);
+  border-right: 1px solid var(--color-hairline);
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-lg) var(--spacing-md);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-sm) var(--spacing-xl);
+  border-bottom: 1px solid var(--color-hairline-soft);
+  margin-bottom: var(--spacing-md);
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-brand-yellow);
+  color: var(--color-primary);
+  border-radius: var(--rounded-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.brand-name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-ink);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--rounded-md);
+  color: var(--color-slate);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink);
+}
+
+.nav-item.active {
+  background-color: var(--color-surface);
+  color: var(--color-brand-blue);
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--color-hairline-soft);
+  padding-top: var(--spacing-md);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.top-header {
+  padding: var(--spacing-xl) var(--spacing-xxl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-surface);
+}
+
+.header-title h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.5px;
+}
+
+.header-title p {
+  color: var(--color-slate);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--rounded-full);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.content-wrapper {
+  padding: 0 var(--spacing-xxl) var(--spacing-xxxl);
+}

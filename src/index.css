@@ -1,1 +1,96 @@
-@import "tailwindcss";
+/* 
+  Miro Design System Variables 
+  Diambil dari DESIGN.md untuk standarisasi warna, tipografi, radius, dan jarak.
+*/
+:root {
+  /* Colors - Brand & Accent */
+  --color-primary: #1c1c1e;
+  --color-on-primary: #ffffff;
+  --color-brand-yellow: #ffd02f;
+  --color-brand-yellow-deep: #fcb900;
+  --color-yellow-light: #fff4c4;
+  --color-yellow-dark: #746019;
+  --color-brand-blue: #4262ff;
+  --color-blue-pressed: #2a41b6;
+  --color-brand-coral: #ff9999;
+  --color-coral-light: #ffc6c6;
+  --color-coral-dark: #600000;
+  --color-brand-teal: #0fbcb0;
+  --color-teal-light: #c3faf5;
+  --color-brand-rose: #ffd8f4;
+  --color-rose-light: #fde0f0;
+  
+  /* Colors - Surface */
+  --color-canvas: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-surface-soft: #fafbfc;
+  --color-surface-yellow: #fff8e0;
+  --color-hairline: #e0e2e8;
+  --color-hairline-soft: #eef0f3;
+  --color-hairline-strong: #c7cad5;
+  
+  /* Colors - Text */
+  --color-ink: #1c1c1e;
+  --color-charcoal: #2c2c34;
+  --color-slate: #555a6a;
+  --color-steel: #6b6f7e;
+  --color-stone: #8e91a0;
+  --color-muted: #a5a8b5;
+  
+  /* Colors - Semantic */
+  --color-success: #00b473;
+  --color-error: #fbd4d4;
+  
+  /* Spacing */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+  --spacing-xxxl: 40px;
+  
+  /* Border Radius */
+  --rounded-xs: 4px;
+  --rounded-sm: 6px;
+  --rounded-md: 8px;
+  --rounded-lg: 12px;
+  --rounded-xl: 16px;
+  --rounded-xxl: 20px;
+  --rounded-xxxl: 28px;
+  --rounded-full: 9999px;
+  
+  /* Shadows */
+  --shadow-subtle: 0px 1px 2px 0px rgba(5, 0, 56, 0.04);
+  --shadow-card: 0px 4px 12px 0px rgba(5, 0, 56, 0.06);
+  --shadow-modal: 0px 16px 48px -8px rgba(5, 0, 56, 0.12);
+}
+
+/* Base Reset & Typography Setup */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* Kita gunakan fallback sans-serif modern karena Roobert PRO mungkin tidak tersedia */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
