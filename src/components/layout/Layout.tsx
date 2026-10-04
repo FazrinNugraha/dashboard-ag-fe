@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Users, CreditCard, Receipt, FileText, Settings, LogOut, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Receipt, FileText, LogOut, RefreshCw } from 'lucide-react';
 import './Layout.css';
 
 interface LayoutProps {
   children: React.ReactNode;
   activeTab?: string;
   onTabChange?: (tabName: string) => void;
+  pageTitle?: string;
+  pageSubtitle?: string;
 }
 
 /**
@@ -13,7 +15,7 @@ interface LayoutProps {
  * Membungkus seluruh aplikasi dengan Sidebar di kiri dan konten utama di kanan.
  * Sangat gampang dibaca karena kita memisahkan list menu ke dalam array.
  */
-export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard', onTabChange }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard', onTabChange, pageTitle, pageSubtitle }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -93,11 +95,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
       {/* Konten Utama Kanan */}
       <main className="main-content">
         <header className="top-header">
-          <div className="header-title">
-            <h1>Ikhtisar Keuangan</h1>
-            <p>Pantau arus kas dan proyek Anda secara real-time.</p>
-          </div>
-          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {pageTitle && (
+            <div className="header-title">
+              <h1>{pageTitle}</h1>
+              {pageSubtitle && <p>{pageSubtitle}</p>}
+            </div>
+          )}
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: pageTitle ? undefined : 'auto' }}>
              <button 
                 onClick={handleSync} 
                 disabled={isSyncing}
