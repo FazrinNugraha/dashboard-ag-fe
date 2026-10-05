@@ -3,7 +3,6 @@ import { Card } from '../ui/Card';
 import { Select } from '../ui/Select';
 import { ArrowUpRight, ArrowDownRight, Wallet, Clock } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, PieChart, Pie, Cell } from 'recharts';
-import { useLabaTrend } from '../../hooks/useApi';
 import './Dashboard.css';
 
 interface KpiItem {
@@ -17,14 +16,14 @@ interface Kpis {
   omzet?: KpiItem;
   kas_masuk?: KpiItem;
   pengeluaran?: KpiItem;
-  laba_bersih?: { value: number; margin_pct?: number };
+  laba_bersih?: { value: number; margin_pct?: number; prev?: number; delta?: number; delta_pct?: number };
   sisa_piutang?: { value: number; jumlah_proyek?: number };
 }
 
 interface StatRowProps {
   kpi: Kpis;
   allTime: { omzet: number; jumlah_proyek: number };
-  trend: { month: string; omzet: number }[];
+  trend: { month: string; omzet: number; laba_bersih: number }[];
   expenseBreakdown: { kategori: string; nominal: number }[];
   currentMonth: string;
   onMonthChange: (month: string) => void;
@@ -89,11 +88,9 @@ export const StatRow: React.FC<StatRowProps> = ({
   const [year, month] = currentMonth.split('-');
   const periodLabel = `Performa (${monthNames[month] ?? ''} ${year ?? ''})`;
 
-  const labaTrend = useLabaTrend(trend.map((t) => t.month));
-
   const dataLine = trend.map((t) => ({
     name: monthNames[t.month.split('-')[1]] ?? t.month,
-    value: labaTrend[t.month] !== undefined ? Math.round(labaTrend[t.month] / 1000000) : null,
+    value: t.laba_bersih !== undefined ? Math.round(t.laba_bersih / 1000000) : null,
   }));
 
   const dataPie = expenseBreakdown.map((item, idx) => ({
@@ -223,6 +220,12 @@ export const StatRow: React.FC<StatRowProps> = ({
           <div style={{ ...cardValueStyle, color: 'var(--color-brand-blue)' }}>
             {formatRp(laba.value)}
           </div>
+          {formatDelta(laba) && (
+            <div style={deltaStyle((laba.delta ?? 0) >= 0)}>
+              {(laba.delta ?? 0) >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+              {formatDelta(laba)}
+            </div>
+          )}
           {laba.margin_pct !== undefined && (
             <div style={subStyle}>Margin Laba: {Math.round(laba.margin_pct)}%</div>
           )}
