@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
 import { API_BASE } from '../lib/api';
+import { parseRupiah, handleMoneyInput } from '../lib/currency';
 
 /**
  * Halaman Catat Pengeluaran
@@ -29,7 +30,7 @@ export const ExpensePage: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        nominal: parseInt(formData.nominal) || 0
+        nominal: parseRupiah(formData.nominal) || 0
       };
 
       const res = await fetch(`${API_BASE}/expenses`, {
@@ -105,12 +106,11 @@ export const ExpensePage: React.FC = () => {
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Nominal (Rp)</label>
             <Input 
-              type="number" 
-              placeholder="Contoh: 1500000" 
+              type="text" 
+              placeholder="Contoh: 1.500.000" 
               required
-              min="1"
               value={formData.nominal} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nominal: e.target.value })} 
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nominal: handleMoneyInput(e.target.value) })} 
             />
           </div>
 

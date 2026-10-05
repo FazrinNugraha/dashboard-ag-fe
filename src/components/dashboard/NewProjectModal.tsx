@@ -3,6 +3,7 @@ import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { API_BASE } from '../../lib/api';
+import { parseRupiah, handleMoneyInput } from '../../lib/currency';
 
 interface NewProjectModalProps {
   onClose: () => void;
@@ -33,9 +34,9 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
     try {
       const payload = {
         ...formData,
-        subtotal: parseInt(formData.subtotal) || 0,
-        diskon: parseInt(formData.diskon) || 0,
-        dp: parseInt(formData.dp) || 0,
+        subtotal: parseRupiah(formData.subtotal) || 0,
+        diskon: parseRupiah(formData.diskon) || 0,
+        dp: parseRupiah(formData.dp) || 0,
       };
 
       const res = await fetch(`${API_BASE}/projects`, {
@@ -116,17 +117,17 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '8px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Subtotal (Rp)</label>
-              <Input type="number" placeholder="5000000" min="0" value={formData.subtotal} onChange={e => setFormData({...formData, subtotal: e.target.value})} required />
+              <Input type="text" placeholder="5.000.000" value={formData.subtotal} onChange={e => setFormData({...formData, subtotal: handleMoneyInput(e.target.value)})} required />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Diskon (Rp)</label>
-              <Input type="number" placeholder="0" min="0" value={formData.diskon} onChange={e => setFormData({...formData, diskon: e.target.value})} required />
+              <Input type="text" placeholder="0" value={formData.diskon} onChange={e => setFormData({...formData, diskon: handleMoneyInput(e.target.value)})} required />
             </div>
           </div>
 
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Uang Muka / DP (Rp)</label>
-            <Input type="number" placeholder="0" min="0" value={formData.dp} onChange={e => setFormData({...formData, dp: e.target.value})} required />
+            <Input type="text" placeholder="0" value={formData.dp} onChange={e => setFormData({...formData, dp: handleMoneyInput(e.target.value)})} required />
             <p style={{ fontSize: '12px', color: 'var(--color-slate)', marginTop: '4px' }}>Jika langsung lunas, masukkan nominal sama dengan (Subtotal - Diskon).</p>
           </div>
 
