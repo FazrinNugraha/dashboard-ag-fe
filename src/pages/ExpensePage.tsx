@@ -3,6 +3,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { API_BASE } from '../lib/api';
 import { parseRupiah, handleMoneyInput, formatRupiah } from '../lib/currency';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 import { 
   Calendar, 
   Wallet, 
@@ -15,7 +17,8 @@ import {
   CheckCircle2, 
   AlertCircle, 
   CreditCard,
-  Loader2
+  Loader2,
+  ShieldCheck
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -65,7 +68,8 @@ const QUICK_AMOUNTS = [50000, 100000, 250000, 500000, 1000000];
 
 /**
  * Halaman Catat Pengeluaran
- * Redesign modern, compact, beraksen warna & icon interaktif sesuai DESIGN.md.
+ * Redesign modern, compact, beraksen warna & icon interaktif.
+ * Dilengkapi konfirmasi modal (double-layer check) untuk mencegah salah input data.
  */
 export const ExpensePage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -77,6 +81,9 @@ export const ExpensePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const selectedCat = CATEGORIES.find(c => c.key === formData.kategori) || CATEGORIES[0];
 
   const addQuickAmount = (val: number) => {
     const current = parseRupiah(formData.nominal) || 0;
@@ -84,8 +91,22 @@ export const ExpensePage: React.FC = () => {
     setFormData({ ...formData, nominal: formatRupiah(next) });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.nominal || parseRupiah(formData.nominal) <= 0) {
+      setError('Nominal pengeluaran harus lebih dari 0.');
+      return;
+    }
+    if (!formData.keterangan.trim()) {
+      setError('Keterangan pengeluaran wajib diisi.');
+      return;
+    }
+    setError('');
+    setShowConfirm(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    setShowConfirm(false);
     setLoading(true);
     setMessage('');
     setError('');
@@ -123,6 +144,14 @@ export const ExpensePage: React.FC = () => {
     }
   };
 
+  const formattedDisplayDate = () => {
+    try {
+      return format(new Date(formData.tanggal), 'dd MMMM yyyy', { locale: id });
+    } catch (e) {
+      return formData.tanggal;
+    }
+  };
+
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '8px' }}>
       <Card variant="base" style={{ padding: '24px' }}>
@@ -145,7 +174,7 @@ export const ExpensePage: React.FC = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+        <form onSubmit={handlePreSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {error && (
             <div style={{
               display: 'flex', alignItems: 'flex-start', gap: '10px',
@@ -372,6 +401,127 @@ export const ExpensePage: React.FC = () => {
           </div>
         </form>
       </Card>
+
+      {/* Pop-up Konfirmasi Double-Layer Check */}
+      {showConfirm && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(5, 0, 56, 0.45)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1100,
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--color-canvas)',
+            borderRadius: 'var(--rounded-xl)',
+            padding: '28px',
+            width: '100%',
+            maxWidth: '440px',
+            boxShadow: 'var(--shadow-modal)',
+            animation: 'modalFadeIn 0.2s ease'
+          }}>
+            {/* Header Popup */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{
+                width: '42px', height: '42px', borderRadius: 'var(--rounded-full)',
+                backgroundColor: '#eff6ff', color: '#2563eb',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+              }}>
+                <ShieldCheck size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>
+                  Konfirmasi Pengeluaran
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--color-slate)', margin: '2px 0 0' }}>
+                  Pastikan informasi berikut sudah benar sebelum dicatat.
+                </p>
+              </div>
+            </div>
+
+            {/* Kotak Ringkasan Data yang Diinput */}
+            <div style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-hairline)',
+              borderRadius: 'var(--rounded-md)',
+              padding: '16px',
+              marginBottom: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}>
+              {/* Highlight Nominal Besar */}
+              <div style={{ textAlign: 'center', paddingBottom: '10px', borderBottom: '1px dashed var(--color-hairline-strong)' }}>
+                <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--color-steel)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Nominal Pengeluaran
+                </span>
+                <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-primary)', marginTop: '2px' }}>
+                  Rp {formData.nominal}
+                </div>
+              </div>
+
+              {/* Rincian Lainnya */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                <span style={{ color: 'var(--color-slate)' }}>Tanggal</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-ink)' }}>{formattedDisplayDate()}</span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                <span style={{ color: 'var(--color-slate)' }}>Kategori</span>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '6px',
+                  backgroundColor: selectedCat.bg, border: `1px solid ${selectedCat.border}`,
+                  padding: '3px 10px', borderRadius: 'var(--rounded-full)',
+                  fontSize: '12px', fontWeight: 600, color: selectedCat.color
+                }}>
+                  {selectedCat.label}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '13px' }}>
+                <span style={{ color: 'var(--color-slate)' }}>Keterangan / Keperluan:</span>
+                <span style={{ fontWeight: 500, color: 'var(--color-ink)', backgroundColor: 'var(--color-canvas)', padding: '8px 10px', borderRadius: 'var(--rounded-sm)', border: '1px solid var(--color-hairline)' }}>
+                  {formData.keterangan}
+                </span>
+              </div>
+            </div>
+
+            {/* Tombol Aksi */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <Button
+                variant="secondary"
+                style={{ flex: 1, justifyContent: 'center', height: '38px' }}
+                onClick={() => setShowConfirm(false)}
+                disabled={loading}
+              >
+                Periksa Kembali
+              </Button>
+              <Button
+                variant="primary"
+                style={{ flex: 1.2, justifyContent: 'center', height: '38px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                onClick={handleConfirmedSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>Menyimpan...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={16} />
+                    <span>Ya, Simpan</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
