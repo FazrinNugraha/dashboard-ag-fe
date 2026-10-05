@@ -9,7 +9,7 @@ export const ReceivablesPage: React.FC = () => {
   const [data, setData] = useState<{ data: any[], total_piutang: number, jumlah_klien: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [monthFilter, setMonthFilter] = useState(''); // Default kosong (Lihat Semua)
-  const [payoffModal, setPayoffModal] = useState<{ isOpen: boolean, idProyek: string, namaKlien: string, sisa: number } | null>(null);
+  const [payoffModal, setPayoffModal] = useState<{ isOpen: boolean, idProyek: string, namaKlien: string, sisa: number, idemKey: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,9 @@ export const ReceivablesPage: React.FC = () => {
   const receivables = data?.data || [];
 
   const handlePayoffClick = (idProyek: string, namaKlien: string, sisa: number) => {
-    setPayoffModal({ isOpen: true, idProyek, namaKlien, sisa });
+    // Kunci idempotency per pembukaan modal: cegah pembayaran tercatat dobel
+    // saat double-click / retry.
+    setPayoffModal({ isOpen: true, idProyek, namaKlien, sisa, idemKey: crypto.randomUUID() });
   };
 
   const handlePayoffConfirm = async () => {
@@ -47,7 +49,8 @@ export const ReceivablesPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
+          'X-Requested-With': 'XMLHttpRequest',
+          'Idempotency-Key': payoffModal.idemKey
         },
         credentials: 'include',
         body: JSON.stringify({ nominal: payoffModal.sisa })

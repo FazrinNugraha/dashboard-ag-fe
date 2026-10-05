@@ -21,6 +21,8 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Kunci idempotency per sesi modal: cegah proyek tercatat dobel saat retry.
+  const [idemKey] = useState(() => crypto.randomUUID());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +42,8 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'x-requested-with': 'XMLHttpRequest'
+          'x-requested-with': 'XMLHttpRequest',
+          'Idempotency-Key': idemKey
         },
         body: JSON.stringify(payload)
       });
