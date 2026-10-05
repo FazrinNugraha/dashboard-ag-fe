@@ -12,7 +12,7 @@ export function useDashboard(month: string) {
     async function fetchData() {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE}/dashboard?month=${month}`);
+        const res = await fetch(`${API_BASE}/dashboard?month=${month}`, { credentials: 'include' });
         if (!res.ok) throw new Error('Gagal memuat data dashboard');
         const json = await res.json();
         setData(json);
@@ -42,7 +42,7 @@ export function useProjects(month: string) {
         const url = month
           ? `${API_BASE}/projects?month=${month}&page_size=100`
           : `${API_BASE}/projects?page_size=100`;
-        const res = await fetch(url);
+        const res = await fetch(url, { credentials: 'include' });
         const json = await res.json();
         setProjects(json.data || []);
       } catch (err) {
@@ -74,7 +74,7 @@ export function useLabaTrend(months: string[]) {
       const list = key.split(',');
       const results = await Promise.all(
         list.map((m) =>
-          fetch(`${API_BASE}/dashboard?month=${m}`)
+          fetch(`${API_BASE}/dashboard?month=${m}`, { credentials: 'include' })
             .then((r) => (r.ok ? r.json() : null))
             .catch(() => null)
         )
