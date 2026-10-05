@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { API_BASE } from '../lib/api';
 
 export const ScanInvoicePage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -19,7 +20,7 @@ export const ScanInvoicePage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://localhost:8000/api/v1/invoices/extract', {
+      const res = await fetch(`${API_BASE}/invoices/extract`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -67,7 +68,7 @@ export const ScanInvoicePage: React.FC = () => {
         dp: previewData.dp || 0 
       };
       
-      const res = await fetch('http://localhost:8000/api/v1/projects', {
+      const res = await fetch(`${API_BASE}/projects`, {
         method: 'POST',
         credentials: 'include',
         headers: {

@@ -4,6 +4,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
 import { Clock } from 'lucide-react';
+import { API_BASE } from '../lib/api';
 
 export const ReceivablesPage: React.FC = () => {
   const [data, setData] = useState<{ data: any[], total_piutang: number, jumlah_klien: number } | null>(null);
@@ -13,7 +14,7 @@ export const ReceivablesPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/v1/receivables', { credentials: 'include' })
+    fetch(`${API_BASE}/receivables`, { credentials: 'include' })
       .then(res => res.json())
       .then(json => {
         setData(json);
@@ -45,7 +46,7 @@ export const ReceivablesPage: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/projects/${payoffModal.idProyek}/payments`, {
+      const res = await fetch(`${API_BASE}/projects/${payoffModal.idProyek}/payments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

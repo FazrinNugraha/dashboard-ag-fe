@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { API_BASE } from '../lib/api';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -19,7 +20,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:8000/api/v1/auth/login', {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {

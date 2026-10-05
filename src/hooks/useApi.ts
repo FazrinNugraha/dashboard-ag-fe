@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-
-// URL backend (bisa dipindah ke .env nanti)
-const API_BASE = 'http://localhost:8000/api/v1';
+import { API_BASE } from '../lib/api';
 
 export function useDashboard(month: string) {
   const [data, setData] = useState<any>(null);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LayoutDashboard, Users, CreditCard, Receipt, FileText, LogOut, RefreshCw } from 'lucide-react';
+import { API_BASE } from '../../lib/api';
 import './Layout.css';
 
 interface LayoutProps {
@@ -22,7 +23,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      const res = await fetch('http://localhost:8000/api/v1/sync', {
+      const res = await fetch(`${API_BASE}/sync`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'x-requested-with': 'XMLHttpRequest' }
@@ -42,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await fetch('http://localhost:8000/api/v1/auth/logout', {
+      await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'x-requested-with': 'XMLHttpRequest' }

@@ -4,6 +4,7 @@ import { StatRow } from './components/dashboard/StatRow';
 import { ProjectTable } from './components/dashboard/ProjectTable';
 import { NewProjectModal } from './components/dashboard/NewProjectModal';
 import { useDashboard, useProjects } from './hooks/useApi';
+import { API_BASE } from './lib/api';
 import { ExpensePage } from './pages/ExpensePage';
 import { ScanInvoicePage } from './pages/ScanInvoicePage';
 import { LoginPage } from './pages/LoginPage';
@@ -17,7 +18,7 @@ function App() {
   // Fungsi untuk mengecek sesi (cookie)
   const checkSession = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/v1/auth/me', { credentials: 'include' });
+      const res = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
       if (res.ok) {
         setIsAuthenticated(true);
       } else {

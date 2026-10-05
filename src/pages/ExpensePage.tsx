@@ -3,6 +3,7 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Select } from '../components/ui/Select';
+import { API_BASE } from '../lib/api';
 
 /**
  * Halaman Catat Pengeluaran
@@ -31,7 +32,7 @@ export const ExpensePage: React.FC = () => {
         nominal: parseInt(formData.nominal) || 0
       };
 
-      const res = await fetch('http://localhost:8000/api/v1/expenses', {
+      const res = await fetch(`${API_BASE}/expenses`, {
         method: 'POST',
         credentials: 'include',
         headers: {

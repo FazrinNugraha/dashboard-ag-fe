@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import { API_BASE } from '../../lib/api';
 
 interface NewProjectModalProps {
   onClose: () => void;
@@ -37,7 +38,7 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
         dp: parseInt(formData.dp) || 0,
       };
 
-      const res = await fetch('http://localhost:8000/api/v1/projects', {
+      const res = await fetch(`${API_BASE}/projects`, {
         method: 'POST',
         credentials: 'include',
         headers: {

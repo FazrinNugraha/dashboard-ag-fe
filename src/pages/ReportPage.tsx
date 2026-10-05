@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
+import { API_BASE } from '../lib/api';
 
 export const ReportPage: React.FC = () => {
   const [spreadsheetUrl, setSpreadsheetUrl] = useState('');
@@ -15,7 +16,7 @@ export const ReportPage: React.FC = () => {
 
   useEffect(() => {
     // Ambil tautan asli Google Sheets dari Backend
-    fetch('http://localhost:8000/api/v1/reports/spreadsheet-link', { credentials: 'include' })
+    fetch(`${API_BASE}/reports/spreadsheet-link`, { credentials: 'include' })
       .then(res => res.json())
       .then(data => setSpreadsheetUrl(data.url))
       .catch(console.error);
@@ -24,7 +25,7 @@ export const ReportPage: React.FC = () => {
   const handleExport = async (format: 'xlsx' | 'pdf') => {
     setLoading(format);
     const value = period === 'month' ? monthValue : yearValue;
-    const url = `http://localhost:8000/api/v1/reports/export?period=${period}&value=${value}&format=${format}`;
+    const url = `${API_BASE}/reports/export?period=${period}&value=${value}&format=${format}`;
     
     try {
       const res = await fetch(url, { credentials: 'include' });
