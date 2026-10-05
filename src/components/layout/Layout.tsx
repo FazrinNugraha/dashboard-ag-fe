@@ -9,6 +9,7 @@ interface LayoutProps {
   onTabChange?: (tabName: string) => void;
   pageTitle?: string;
   pageSubtitle?: string;
+  username?: string;
 }
 
 /**
@@ -16,9 +17,12 @@ interface LayoutProps {
  * Membungkus seluruh aplikasi dengan Sidebar di kiri dan konten utama di kanan.
  * Sangat gampang dibaca karena kita memisahkan list menu ke dalam array.
  */
-export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard', onTabChange, pageTitle, pageSubtitle }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard', onTabChange, pageTitle, pageSubtitle, username }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const displayName = (username || '').trim();
+  const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -116,7 +120,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
                <RefreshCw size={16} className={isSyncing ? "spin-animation" : ""} />
                {isSyncing ? 'Menyinkronkan...' : 'Sinkronkan Sheets'}
              </button>
-             <div className="profile-circle">A</div>
+             <div className="profile-circle" title={displayName ? `Login sebagai ${displayName}` : 'Admin'}>
+               {initial}
+             </div>
           </div>
         </header>
         

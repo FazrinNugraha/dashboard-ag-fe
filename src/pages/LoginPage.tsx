@@ -5,7 +5,7 @@ import { Input } from '../components/ui/Input';
 import { API_BASE } from '../lib/api';
 
 interface LoginPageProps {
-  onSuccess: () => void;
+  onSuccess: (username: string) => void;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
@@ -32,11 +32,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
 
       if (!res.ok) {
         const errJson = await res.json();
-        throw new Error(errJson.detail?.message || errJson.detail || 'Login gagal.');
+        throw new Error(errJson.error?.message || errJson.detail?.message || errJson.detail || 'Login gagal.');
       }
 
       // Jika berhasil, token HTTP-only cookie sudah terset di browser.
-      onSuccess();
+      const data = await res.json().catch(() => ({}));
+      onSuccess(data.username ?? username);
     } catch (err: any) {
       setError(err.message);
     } finally {

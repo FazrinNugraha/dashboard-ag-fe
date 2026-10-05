@@ -14,12 +14,15 @@ import { format } from 'date-fns';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [username, setUsername] = useState('');
 
   // Fungsi untuk mengecek sesi (cookie)
   const checkSession = async () => {
     try {
       const res = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
       if (res.ok) {
+        const me = await res.json();
+        setUsername(me.username ?? '');
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
@@ -121,7 +124,14 @@ function App() {
   }
 
   if (isAuthenticated === false) {
-    return <LoginPage onSuccess={() => setIsAuthenticated(true)} />;
+    return (
+      <LoginPage
+        onSuccess={(user) => {
+          setUsername(user);
+          setIsAuthenticated(true);
+        }}
+      />
+    );
   }
 
   return (
@@ -130,6 +140,7 @@ function App() {
       onTabChange={setActiveTab}
       pageTitle={meta.title}
       pageSubtitle={meta.subtitle}
+      username={username}
     >
       {renderContent()}
       {isProjectModalOpen && <NewProjectModal onClose={() => setIsProjectModalOpen(false)} />}
