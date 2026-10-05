@@ -55,21 +55,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
     }}>
       <Card variant="base" style={{ width: '100%', maxWidth: '400px', padding: '40px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ 
-            width: '48px', 
-            height: '48px', 
-            backgroundColor: 'var(--color-brand-yellow)', 
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 16px',
-            fontWeight: 700,
-            fontSize: '18px',
-            color: 'var(--color-primary)'
-          }}>AA</div>
+          <img 
+            src="/logo-icon.png" 
+            alt="Logo Agungjaya Aluminium" 
+            style={{ 
+              height: '48px', 
+              width: 'auto', 
+              objectFit: 'contain',
+              margin: '0 auto 16px',
+              display: 'block'
+            }} 
+          />
           <h1 style={{ fontSize: '24px', fontWeight: 600 }}>Masuk ke Dashboard</h1>
-          <p style={{ color: 'var(--color-slate)', marginTop: '8px' }}>Gunakan kredensial admin Anda.</p>
+          <p style={{ color: 'var(--color-slate)', marginTop: '8px', fontWeight: 600, letterSpacing: '0.5px' }}>AGUNGJAYA ALUMINIUM</p>
         </div>
 
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

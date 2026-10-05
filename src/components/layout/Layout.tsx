@@ -72,8 +72,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
       {/* Sidebar Kiri */}
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <div className="brand-logo">AA</div>
-          <span className="brand-name">Agungjaya Alum.</span>
+          <img 
+            src="/logo-icon.png" 
+            alt="Logo Agungjaya Aluminium" 
+            className="brand-logo-img" 
+          />
+          <span className="brand-name">AGUNGJAYA ALUMINIUM</span>
         </div>
 
         <nav className="sidebar-nav">

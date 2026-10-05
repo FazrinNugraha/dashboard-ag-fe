@@ -6,7 +6,7 @@
 
 /* Sidebar */
 .sidebar {
-  width: 260px;
+  width: 264px;
   background-color: var(--color-canvas);
   border-right: 1px solid var(--color-hairline);
   display: flex;
@@ -20,29 +20,26 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: 0 var(--spacing-sm) var(--spacing-xl);
+  gap: 10px;
+  padding: 0 var(--spacing-xs) var(--spacing-xl);
   border-bottom: 1px solid var(--color-hairline-soft);
   margin-bottom: var(--spacing-md);
 }
 
-.brand-logo {
-  width: 32px;
-  height: 32px;
-  background-color: var(--color-brand-yellow);
-  color: var(--color-primary);
-  border-radius: var(--rounded-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
+.brand-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .brand-name {
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 13.5px;
   color: var(--color-ink);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .sidebar-nav {
