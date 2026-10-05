@@ -17,11 +17,13 @@
 /* Ukuran */
 .btn-size-md {
   font-size: 14px;
-  padding: 12px 24px;
+  height: 38px;
+  padding: 0 20px;
 }
 .btn-size-sm {
   font-size: 13px;
-  padding: 8px 16px;
+  height: 32px;
+  padding: 0 14px;
 }
 
 /* Varian */

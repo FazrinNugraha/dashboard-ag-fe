@@ -39,7 +39,7 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
     <Card variant="base" className="project-table-card">
       <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
         <h3>Proyek Terbaru</h3>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Select
             value={filterMonth}
             onChange={onFilterMonthChange}

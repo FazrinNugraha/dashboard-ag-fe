@@ -108,7 +108,7 @@ export const ReceivablesPage: React.FC = () => {
       {/* Filter + Segarkan: di bawah banner piutang */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-ink)' }}>Rincian Tagihan per Klien</h3>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Select
             value={monthFilter}
             onChange={setMonthFilter}
