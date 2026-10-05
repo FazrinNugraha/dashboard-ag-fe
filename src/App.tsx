@@ -42,9 +42,10 @@ function App() {
   const [currentMonth, setCurrentMonth] = useState(() => format(new Date(), 'yyyy-MM'));
   const [projectMonth, setProjectMonth] = useState(''); // Default kosong (Lihat Semua)
 
-  // Ambil data dari backend
-  const { data: dashboardData, loading: dashLoading } = useDashboard(currentMonth);
-  const { projects } = useProjects(projectMonth);
+  // Ambil data dari backend (hanya setelah login, agar tidak kena 401)
+  const isAuthed = isAuthenticated === true;
+  const { data: dashboardData, loading: dashLoading } = useDashboard(currentMonth, isAuthed);
+  const { projects } = useProjects(projectMonth, isAuthed);
 
   // Judul + deskripsi per tab (ditampilkan sejajar dengan Sinkronkan Sheets di header)
   const pageMeta: Record<string, { title: string; subtitle: string }> = {
