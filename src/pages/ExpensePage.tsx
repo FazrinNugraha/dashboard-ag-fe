@@ -5,6 +5,7 @@ import { API_BASE } from '../lib/api';
 import { parseRupiah, handleMoneyInput, formatRupiah } from '../lib/currency';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { 
   Calendar, 
   Wallet, 
@@ -92,6 +93,8 @@ export const ExpensePage: React.FC = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+  // Desktop: modal konfirmasi terpusat; mobile: bottom-sheet.
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   // Tutup dropdown jika klik di luar
   useEffect(() => {
@@ -501,18 +504,20 @@ export const ExpensePage: React.FC = () => {
           backdropFilter: 'blur(4px)',
           display: 'flex',
           /* Mobile: sheet style (bawah), Desktop: tengah */
-          alignItems: 'flex-end',
+          alignItems: isDesktop ? 'center' : 'flex-end',
           justifyContent: 'center',
           zIndex: 1100,
-          padding: '0'
+          padding: isDesktop ? '24px' : '0'
         }}>
           <div style={{
             backgroundColor: 'var(--color-canvas)',
-            borderRadius: 'var(--rounded-xl) var(--rounded-xl) 0 0',
+            borderRadius: isDesktop ? 'var(--rounded-xl)' : 'var(--rounded-xl) var(--rounded-xl) 0 0',
             padding: '28px',
             paddingBottom: 'max(28px, env(safe-area-inset-bottom))',
             width: '100%',
             maxWidth: '440px',
+            maxHeight: isDesktop ? '90dvh' : undefined,
+            overflowY: isDesktop ? 'auto' : undefined,
             boxShadow: 'var(--shadow-modal)',
             animation: 'modalFadeIn 0.2s ease'
           }}>
