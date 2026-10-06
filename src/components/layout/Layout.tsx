@@ -52,7 +52,15 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab = 'Dashboard
       if (res.ok) {
         window.location.reload();
       } else {
-        alert('Gagal menyinkronkan data.');
+        let detail = '';
+        try {
+          const body = await res.json();
+          detail = body?.error?.message || body?.detail?.message || body?.detail || '';
+          if (body?.error?.code) detail = `[${body.error.code}] ${detail}`;
+        } catch {
+          // respons bukan JSON
+        }
+        alert(`Gagal menyinkronkan data. (HTTP ${res.status})${detail ? `\n\n${detail}` : ''}`);
       }
     } catch {
       alert('Terjadi kesalahan jaringan.');

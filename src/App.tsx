@@ -53,7 +53,7 @@ function App() {
 
   // Ambil data dari backend (hanya setelah login, agar tidak kena 401)
   const isAuthed = isAuthenticated === true;
-  const { data: dashboardData, loading: dashLoading } = useDashboard(currentMonth, isAuthed);
+  const { data: dashboardData, loading: dashLoading, error: dashError } = useDashboard(currentMonth, isAuthed);
   const { projects } = useProjects(projectMonth, isAuthed);
 
   // Judul + deskripsi per tab (ditampilkan sejajar dengan Sinkronkan Sheets di header)
@@ -102,6 +102,14 @@ function App() {
       return (
         <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-slate)' }}>
           Memuat data dari server...
+        </div>
+      );
+    }
+
+    if (dashError) {
+      return (
+        <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-error)' }}>
+          Gagal memuat data dashboard: {dashError}
         </div>
       );
     }
