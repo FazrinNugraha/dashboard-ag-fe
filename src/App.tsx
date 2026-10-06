@@ -36,11 +36,17 @@ function App() {
     checkSession();
   }, []);
 
-  // State untuk navigasi tab
-  const [activeTab, setActiveTab] = useState('Ringkasan Utama');
+  // State untuk navigasi tab, disimpan di localStorage agar bertahan saat di-refresh (0 impact ke server, ultra-ringan)
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('miroDashboardActiveTab') || 'Ringkasan Utama';
+  });
+
+  // Setiap kali tab berpindah, simpan ke memori browser
+  useEffect(() => {
+    localStorage.setItem('miroDashboardActiveTab', activeTab);
+  }, [activeTab]);
+
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
-
-
   // State untuk filter bulan (default bulan ini: "YYYY-MM")
   const [currentMonth, setCurrentMonth] = useState(() => format(new Date(), 'yyyy-MM'));
   const [projectMonth, setProjectMonth] = useState(''); // Default kosong (Lihat Semua)
