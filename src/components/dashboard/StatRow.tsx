@@ -116,7 +116,7 @@ export const StatRow: React.FC<StatRowProps> = ({
   };
 
   const cardValueStyle: React.CSSProperties = {
-    fontSize: '24px',
+    fontSize: 'clamp(18px, 4vw, 24px)',
     fontWeight: 500,
     letterSpacing: '-0.5px',
     lineHeight: 1.2,
@@ -141,13 +141,13 @@ export const StatRow: React.FC<StatRowProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-      {/* Banner Omzet All-Time: Berdiri sendiri, kuning khas Miro */}
+      {/* Banner Omzet All-Time */}
       <Card variant="yellow" hoverEffect style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, marginBottom: '4px', opacity: 0.85 }}>
           <Wallet size={16} />
           Omzet All-Time
         </div>
-        <div style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-1px', lineHeight: 1.15 }}>
+        <div style={{ fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 500, letterSpacing: '-1px', lineHeight: 1.15 }}>
           {formatRp(allTime.omzet)}
         </div>
         <div style={{ fontSize: '14px', marginTop: '8px', opacity: 0.75 }}>
@@ -156,8 +156,8 @@ export const StatRow: React.FC<StatRowProps> = ({
       </Card>
 
       {/* Baris Performa + Filter Bulan */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--color-ink)' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+        <h3 style={{ fontSize: 'clamp(15px, 3vw, 18px)', fontWeight: 500, color: 'var(--color-ink)' }}>
           {periodLabel}
         </h3>
         <Select
@@ -167,10 +167,10 @@ export const StatRow: React.FC<StatRowProps> = ({
         />
       </div>
 
-      {/* 4 KPI Card Putih dengan icon berwarna + data delta dari API */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+      {/* 4 KPI Card: 1 kolom di mobile, 2 di sm, 4 di lg */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '16px' }}>
 
-        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)' }}>
+        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--color-tint-teal)', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div style={cardTitleStyle}>Pemasukan Kotor (Omzet)</div>
             <div style={{ ...iconChipStyle, backgroundColor: 'var(--color-teal-light)' }}>
@@ -190,7 +190,7 @@ export const StatRow: React.FC<StatRowProps> = ({
           )}
         </Card>
 
-        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)' }}>
+        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--color-tint-rose)', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div style={cardTitleStyle}>Total Pengeluaran</div>
             <div style={{ ...iconChipStyle, backgroundColor: 'var(--color-coral-light)' }}>
@@ -210,7 +210,7 @@ export const StatRow: React.FC<StatRowProps> = ({
           )}
         </Card>
 
-        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)' }}>
+        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--color-tint-blue)', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div style={cardTitleStyle}>Laba Bersih</div>
             <div style={{ ...iconChipStyle, backgroundColor: 'var(--color-surface-pricing-featured)' }}>
@@ -231,7 +231,7 @@ export const StatRow: React.FC<StatRowProps> = ({
           )}
         </Card>
 
-        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)' }}>
+        <Card variant="base" hoverEffect style={{ padding: 'var(--spacing-xl)', backgroundColor: 'var(--color-tint-orange)', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div style={cardTitleStyle}>Sisa Piutang (Klien)</div>
             <div style={{ ...iconChipStyle, backgroundColor: 'var(--color-brand-orange-light)' }}>
@@ -247,41 +247,46 @@ export const StatRow: React.FC<StatRowProps> = ({
         </Card>
       </div>
 
-      {/* Charts dengan data asli dari API */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+      {/* Charts: stack di mobile (1 kolom), 2fr+1fr di lg */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+        gap: '16px'
+      }}>
         <Card variant="base">
-          <h3 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '24px' }}>Tren Laba Bersih</h3>
-          <div style={{ height: '300px', width: '100%' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '24px' }}>Tren Laba Bersih</h3>
+          <div style={{ height: '240px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={dataLine} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <LineChart data={dataLine} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-hairline)" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 14, fill: 'var(--color-slate)' }} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-slate)' }} />
                 <YAxis
-                  axisLine={false} tickLine={false} tick={{ fontSize: 14, fill: 'var(--color-slate)' }}
+                  axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-slate)' }}
                   tickFormatter={(v: number) => `${v}jt`}
+                  width={36}
                 />
                 <RechartsTooltip
                   cursor={{ stroke: 'var(--color-hairline)' }}
                   contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-hairline)' }}
                   formatter={(value: any) => [`${formatRp(Number(value) * 1000000)}`, 'Laba Bersih']}
                 />
-                <Line connectNulls type="monotone" dataKey="value" stroke="var(--color-brand-blue)" strokeWidth={4} dot={{ r: 6, fill: 'var(--color-canvas)', stroke: 'var(--color-brand-blue)', strokeWidth: 3 }} />
+                <Line connectNulls type="monotone" dataKey="value" stroke="var(--color-brand-blue)" strokeWidth={3} dot={{ r: 5, fill: 'var(--color-canvas)', stroke: 'var(--color-brand-blue)', strokeWidth: 2.5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
         <Card variant="base">
-          <h3 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '24px' }}>Komposisi Pengeluaran</h3>
-          <div style={{ height: '240px', width: '100%' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 500, marginBottom: '16px' }}>Komposisi Pengeluaran</h3>
+          <div style={{ height: '200px', width: '100%' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={dataPie}
                   cx="50%"
                   cy="50%"
-                  innerRadius={70}
-                  outerRadius={90}
+                  innerRadius={60}
+                  outerRadius={80}
                   paddingAngle={4}
                   dataKey="value"
                   stroke="none"
@@ -294,10 +299,11 @@ export const StatRow: React.FC<StatRowProps> = ({
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', marginTop: '16px' }}>
+          {/* Legend selalu di bawah (mobile-friendly) */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
             {dataPie.map((item, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', fontSize: '14px', color: 'var(--color-slate)' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: item.color, marginRight: '8px' }}></div>
+              <div key={i} style={{ display: 'flex', alignItems: 'center', fontSize: '12px', color: 'var(--color-slate)', gap: '6px' }}>
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: item.color, flexShrink: 0 }}></div>
                 {item.name}
               </div>
             ))}

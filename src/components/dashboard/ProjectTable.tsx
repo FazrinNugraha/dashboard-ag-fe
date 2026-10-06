@@ -37,16 +37,16 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
 
   return (
     <Card variant="base" className="project-table-card">
-      <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+      <div className="table-header-row">
         <h3>Proyek Terbaru</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="table-header-actions">
           <Select
             value={filterMonth}
             onChange={onFilterMonthChange}
             placeholder="Lihat Semua"
             options={monthOptions}
           />
-          <button className="btn btn-primary btn-size-md" onClick={onAddProject}>
+          <button className="btn btn-primary btn-size-md table-new-btn" onClick={onAddProject}>
             + Proyek Baru
           </button>
         </div>
@@ -59,7 +59,7 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
               <th>No. Invoice</th>
               <th>Tanggal</th>
               <th>Klien</th>
-              <th>Pekerjaan</th>
+              <th className="col-pekerjaan">Pekerjaan</th>
               <th className="text-right">Nilai Proyek</th>
               <th className="text-center">Status</th>
             </tr>
@@ -72,7 +72,7 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
                   {format(new Date(p.tanggal), 'dd MMM yyyy', { locale: id })}
                 </td>
                 <td>{p.nama_klien}</td>
-                <td className="text-slate truncate max-w-[200px]">{p.pekerjaan}</td>
+                <td className="text-slate truncate max-w-[200px] col-pekerjaan">{p.pekerjaan}</td>
                 <td className="text-right font-medium">{formatRp(p.nilai_proyek)}</td>
                 <td className="text-center">
                   <Badge variant={p.status_bayar === 'LUNAS' ? 'success' : 'tag-yellow'}>

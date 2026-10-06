@@ -1,29 +1,83 @@
+/* ─── Layout Container ───────────────────────────────────── */
 .layout-container {
   display: flex;
-  min-height: 100vh;
+  height: 100dvh; /* Fixed height untuk internal scroll */
+  overflow: hidden; /* Hindari body scroll */
   background-color: var(--color-surface);
 }
 
-/* Sidebar */
+/* ─── Sidebar Overlay (mobile drawer backdrop) ──────────── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(5, 0, 56, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 200;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────
+   Mobile-first: off-canvas (tersembunyi di kiri)
+   lg+: fixed sidebar selalu tampil
+────────────────────────────────────────────────────────── */
 .sidebar {
-  width: 264px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(var(--sidebar-width), 85vw);
   background-color: var(--color-canvas);
   border-right: 1px solid var(--color-hairline);
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-lg) var(--spacing-md);
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  padding: var(--spacing-md);
+  /* Padding safe area kiri (notch landscape) */
+  padding-left: max(var(--spacing-md), var(--safe-left));
+  z-index: 210;
+  /* Slide in dari kiri */
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Drawer terbuka */
+.sidebar--open {
+  transform: translateX(0);
+}
+
+/* Desktop: sidebar selalu tampil, tidak perlu transform */
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    transform: none !important;
+    height: 100dvh;
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .sidebar-overlay {
+    display: none;
+  }
+}
+
+/* ─── Sidebar Header (brand + close btn) ─────────────────── */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--color-hairline-soft);
+  margin-bottom: var(--spacing-md);
+  /* Tambahan padding top safe area (notch) */
+  padding-top: max(0px, var(--safe-top));
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 var(--spacing-xs) var(--spacing-xl);
-  border-bottom: 1px solid var(--color-hairline-soft);
-  margin-bottom: var(--spacing-md);
+  min-width: 0;
 }
 
 .brand-logo-img {
@@ -35,13 +89,40 @@
 
 .brand-name {
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--color-ink);
   white-space: nowrap;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Tombol X tutup sidebar — hanya tampil di mobile */
+.sidebar-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: var(--rounded-md);
+  background: transparent;
+  color: var(--color-slate);
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+.sidebar-close-btn:hover {
+  background-color: var(--color-surface);
+}
+
+@media (min-width: 1024px) {
+  .sidebar-close-btn {
+    display: none;
+  }
+}
+
+/* ─── Nav Items ───────────────────────────────────────────── */
 .sidebar-nav {
   display: flex;
   flex-direction: column;
@@ -53,7 +134,9 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
+  /* Touch target min 44px */
+  min-height: 44px;
+  padding: var(--spacing-xs) var(--spacing-md);
   background: transparent;
   border: none;
   border-radius: var(--rounded-md);
@@ -61,6 +144,7 @@
   font-size: 14px;
   font-weight: 500;
   text-align: left;
+  width: 100%;
   transition: all 0.2s;
   cursor: pointer;
 }
@@ -79,40 +163,145 @@
 .sidebar-footer {
   border-top: 1px solid var(--color-hairline-soft);
   padding-top: var(--spacing-md);
+  /* Pastikan tidak tertutup home bar */
+  padding-bottom: max(0px, var(--safe-bottom));
 }
 
-/* Main Content */
+/* ─── Main Content ────────────────────────────────────────── */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* Scroll terjadi di dalam sini */
   overflow-x: hidden;
+  /* Di mobile, sidebar adalah overlay jadi main-content pakai full width */
+  min-width: 0;
 }
 
+/* ─── Top Header ──────────────────────────────────────────── */
 .top-header {
-  padding: var(--spacing-xl) var(--spacing-xxl);
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
+  /* Mobile: compact padding */
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-top: max(var(--spacing-sm), var(--safe-top));
+  background-color: var(--color-canvas);
+  border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+@media (min-width: 1024px) {
+  .top-header {
+    padding: var(--spacing-lg) var(--spacing-xxl);
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-hairline-soft);
+  }
+}
+
+/* Hamburger — visible di mobile, hidden di desktop */
+.hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: var(--rounded-md);
+  background: transparent;
+  color: var(--color-ink);
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+.hamburger-btn:hover {
   background-color: var(--color-surface);
 }
 
+@media (min-width: 1024px) {
+  .hamburger-btn {
+    display: none;
+  }
+}
+
+.header-title {
+  flex: 1;
+  min-width: 0;
+}
+
 .header-title h1 {
-  font-size: 24px;
+  font-size: clamp(16px, 4vw, 24px);
   font-weight: 600;
   color: var(--color-ink);
   letter-spacing: -0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.header-title p {
+.header-subtitle {
   color: var(--color-slate);
-  font-size: 14px;
-  margin-top: 4px;
+  font-size: 13px;
+  margin-top: 2px;
+  /* Sembunyikan subtitle di mobile agar header tidak terlalu tinggi */
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .header-subtitle {
+    display: block;
+    font-size: 14px;
+  }
+}
+
+/* ─── Header Actions ─────────────────────────────────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Tombol Sinkronkan Sheets */
+.sync-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: var(--rounded-full);
+  padding: 0 var(--spacing-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+.sync-btn:hover:not(:disabled) {
+  background-color: var(--color-surface-soft);
+}
+
+/* Sembunyikan label teks di mobile, tampilkan hanya ikon */
+.sync-btn-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .sync-btn-label {
+    display: inline;
+  }
+  .sync-btn {
+    font-size: 14px;
+  }
 }
 
 .profile-circle {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
   border-radius: var(--rounded-full);
   background-color: var(--color-primary);
   color: var(--color-on-primary);
@@ -120,15 +309,35 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
+@media (min-width: 768px) {
+  .profile-circle {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* ─── Content Wrapper ────────────────────────────────────── */
 .content-wrapper {
-  padding: 0 var(--spacing-xxl) var(--spacing-xxxl);
+  /* Mobile: padding lebih kecil */
+  padding: var(--spacing-md);
+  padding-bottom: calc(var(--spacing-xxxl) + var(--safe-bottom));
 }
 
+@media (min-width: 768px) {
+  .content-wrapper {
+    padding: 0 var(--spacing-xxl) var(--spacing-xxxl);
+  }
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
 @keyframes spin {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
 .spin-animation {
   animation: spin 1s linear infinite;

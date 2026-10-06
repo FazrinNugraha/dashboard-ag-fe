@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { API_BASE } from '../lib/api';
@@ -18,13 +18,17 @@ import {
   AlertCircle, 
   CreditCard,
   Loader2,
-  ShieldCheck
+  ShieldCheck,
+  ChevronDown,
+  Check,
+  Tag
 } from 'lucide-react';
 
 const CATEGORIES = [
   {
     key: 'BAHAN_BAKU',
     label: 'Bahan Baku',
+    desc: 'Kayu, besi, triplek, semen, baut, lem, dsb.',
     icon: Package,
     color: '#2563eb', // blue
     bg: '#eff6ff',
@@ -33,6 +37,7 @@ const CATEGORIES = [
   {
     key: 'AKSESORIS',
     label: 'Aksesoris',
+    desc: 'Handle, engsel, rel laci, sekrup, kunci, dsb.',
     icon: Wrench,
     color: '#0d9488', // teal
     bg: '#f0fdfa',
@@ -41,6 +46,7 @@ const CATEGORIES = [
   {
     key: 'UPAH',
     label: 'Upah Tukang',
+    desc: 'Ongkos tukang harian, borongan, mandor',
     icon: Users,
     color: '#e11d48', // rose
     bg: '#fff1f2',
@@ -49,6 +55,7 @@ const CATEGORIES = [
   {
     key: 'OPERASIONAL',
     label: 'Operasional',
+    desc: 'BBM pikap, tol, konsumsi, listrik, pulsa',
     icon: Fuel,
     color: '#d97706', // amber
     bg: '#fffbeb',
@@ -57,6 +64,7 @@ const CATEGORIES = [
   {
     key: 'LAINNYA',
     label: 'Lain-lain',
+    desc: 'Pengeluaran umum atau keperluan lainnya',
     icon: MoreHorizontal,
     color: '#64748b', // slate
     bg: '#f8fafc',
@@ -68,20 +76,33 @@ const QUICK_AMOUNTS = [50000, 100000, 250000, 500000, 1000000];
 
 /**
  * Halaman Catat Pengeluaran
- * Redesign modern, compact, beraksen warna & icon interaktif.
- * Dilengkapi konfirmasi modal (double-layer check) untuk mencegah salah input data.
+ * Desain simpel, bersih, dan jelas dengan dropdown pilihan kategori.
  */
 export const ExpensePage: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     tanggal: new Date().toISOString().split('T')[0],
     kategori: 'BAHAN_BAKU',
     keterangan: '',
     nominal: ''
-  });
+  }));
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+
+  // Tutup dropdown jika klik di luar
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const selectedCat = CATEGORIES.find(c => c.key === formData.kategori) || CATEGORIES[0];
 
@@ -147,25 +168,26 @@ export const ExpensePage: React.FC = () => {
   const formattedDisplayDate = () => {
     try {
       return format(new Date(formData.tanggal), 'dd MMMM yyyy', { locale: id });
-    } catch (e) {
+    } catch {
       return formData.tanggal;
     }
   };
 
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '8px' }}>
-      <Card variant="base" style={{ padding: '24px' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '8px' }}>
+      <Card variant="base" style={{ padding: '24px 28px', boxShadow: 'var(--shadow-card)' }}>
         {/* Header Visual Form */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '22px' }}>
           <div style={{
-            width: '40px', height: '40px', borderRadius: 'var(--rounded-full)',
-            backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-hairline)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-ink)'
+            width: '42px', height: '42px', borderRadius: 'var(--rounded-lg)',
+            backgroundColor: '#eff6ff', border: '1px solid #bfdbfe',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb',
+            flexShrink: 0
           }}>
-            <CreditCard size={20} />
+            <CreditCard size={22} />
           </div>
           <div>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>
+            <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>
               Form Pengeluaran
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--color-slate)', margin: '2px 0 0' }}>
@@ -197,8 +219,8 @@ export const ExpensePage: React.FC = () => {
             </div>
           )}
 
-          {/* Baris 1: Tanggal & Nominal (Dua Kolom Compact) */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+          {/* Baris 1: Tanggal & Kategori Pengeluaran (2 Kolom Rapi) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 230px), 1fr))', gap: '16px' }}>
             {/* Tanggal */}
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
@@ -207,7 +229,7 @@ export const ExpensePage: React.FC = () => {
               <div style={{
                 display: 'flex', alignItems: 'center',
                 backgroundColor: 'var(--color-canvas)', border: '1px solid var(--color-hairline-strong)',
-                borderRadius: 'var(--rounded-md)', height: '40px', overflow: 'hidden'
+                borderRadius: 'var(--rounded-md)', height: '42px', overflow: 'hidden'
               }}>
                 <input 
                   type="date" 
@@ -223,137 +245,205 @@ export const ExpensePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Nominal */}
-            <div>
+            {/* Kategori Pengeluaran (Dropdown Bersih & Jelas) */}
+            <div ref={dropdownRef} style={{ position: 'relative' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
-                <Wallet size={14} color="var(--color-steel)" /> Nominal (Rp)
+                <Tag size={14} color="var(--color-steel)" /> Kategori Pengeluaran
               </label>
-              <div style={{
-                display: 'flex', alignItems: 'center',
-                backgroundColor: 'var(--color-canvas)', border: '1px solid var(--color-hairline-strong)',
-                borderRadius: 'var(--rounded-md)', height: '40px', overflow: 'hidden'
-              }}>
-                <span style={{
-                  backgroundColor: 'var(--color-surface)', borderRight: '1px solid var(--color-hairline-strong)',
-                  padding: '0 12px', height: '100%', display: 'flex', alignItems: 'center',
-                  fontWeight: 600, fontSize: '12px', color: 'var(--color-slate)'
-                }}>
-                  Rp
-                </span>
-                <input 
-                  type="text" 
-                  placeholder="0" 
-                  required
-                  value={formData.nominal} 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nominal: handleMoneyInput(e.target.value) })} 
-                  style={{
-                    flex: 1, height: '100%', border: 'none', outline: 'none',
-                    padding: '0 12px', fontSize: '14px', fontWeight: 600,
-                    fontFamily: 'inherit', color: 'var(--color-ink)', backgroundColor: 'transparent'
-                  }}
+              
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                style={{
+                  width: '100%',
+                  height: '42px',
+                  backgroundColor: 'var(--color-canvas)',
+                  border: isDropdownOpen ? '1.5px solid var(--color-brand-blue)' : '1px solid var(--color-hairline-strong)',
+                  borderRadius: 'var(--rounded-md)',
+                  padding: '0 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  boxShadow: isDropdownOpen ? '0 0 0 3px rgba(66, 98, 255, 0.12)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '26px', height: '26px', borderRadius: 'var(--rounded-sm)',
+                    backgroundColor: selectedCat.bg, color: selectedCat.color,
+                    border: `1px solid ${selectedCat.border}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {React.createElement(selectedCat.icon, { size: 14 })}
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-ink)' }}>
+                    {selectedCat.label}
+                  </span>
+                </div>
+                <ChevronDown 
+                  size={16} 
+                  style={{ 
+                    color: 'var(--color-steel)', 
+                    transform: isDropdownOpen ? 'rotate(180deg)' : 'none',
+                    transition: 'transform 0.2s ease'
+                  }} 
                 />
-              </div>
+              </button>
 
-              {/* Quick Amount Shortcuts */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
-                {QUICK_AMOUNTS.map((amt) => (
-                  <button
-                    key={amt}
-                    type="button"
-                    onClick={() => addQuickAmount(amt)}
-                    style={{
-                      fontSize: '11px', fontWeight: 500,
-                      backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-hairline)',
-                      borderRadius: 'var(--rounded-full)', padding: '2px 8px',
-                      color: 'var(--color-slate)', cursor: 'pointer', transition: 'all 0.15s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--color-surface-soft)';
-                      e.currentTarget.style.borderColor = 'var(--color-hairline-strong)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--color-surface)';
-                      e.currentTarget.style.borderColor = 'var(--color-hairline)';
-                    }}
-                  >
-                    +{amt >= 1000000 ? `${amt / 1000000} jt` : `${amt / 1000} rb`}
-                  </button>
-                ))}
-                {formData.nominal && (
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, nominal: '' })}
-                    style={{
-                      fontSize: '11px', fontWeight: 500,
-                      backgroundColor: 'transparent', border: 'none',
-                      color: '#dc2626', padding: '2px 4px', cursor: 'pointer'
-                    }}
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
+              {/* Popup Menu Dropdown */}
+              {isDropdownOpen && (
+                <div style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: 'var(--color-canvas)',
+                  border: '1px solid var(--color-hairline)',
+                  borderRadius: 'var(--rounded-lg)',
+                  boxShadow: '0 12px 28px -4px rgba(5, 0, 56, 0.14), 0 4px 10px -2px rgba(5, 0, 56, 0.06)',
+                  zIndex: 50,
+                  padding: '6px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '3px'
+                }}>
+                  {CATEGORIES.map((cat) => {
+                    const isSelected = formData.kategori === cat.key;
+                    return (
+                      <button
+                        key={cat.key}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, kategori: cat.key });
+                          setIsDropdownOpen(false);
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          borderRadius: 'var(--rounded-md)',
+                          border: 'none',
+                          backgroundColor: isSelected ? 'var(--color-surface)' : 'transparent',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          transition: 'background-color 0.15s ease',
+                          width: '100%'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--color-surface-soft)';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div style={{
+                            width: '28px', height: '28px', borderRadius: 'var(--rounded-sm)',
+                            backgroundColor: cat.bg, color: cat.color,
+                            border: `1px solid ${cat.border}`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                          }}>
+                            {React.createElement(cat.icon, { size: 14 })}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '13px', fontWeight: isSelected ? 600 : 500, color: 'var(--color-ink)' }}>
+                              {cat.label}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '1px' }}>
+                              {cat.desc}
+                            </div>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <Check size={16} style={{ color: 'var(--color-brand-blue)', flexShrink: 0 }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Baris 2: Kategori Pengeluaran (Visual Interactive Chips) */}
+          {/* Baris 2: Nominal */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
-              Kategori Pengeluaran
+              <Wallet size={14} color="var(--color-steel)" /> Nominal (Rp)
             </label>
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(105px, 1fr))',
-              gap: '8px'
+              display: 'flex', alignItems: 'center',
+              backgroundColor: 'var(--color-canvas)', border: '1px solid var(--color-hairline-strong)',
+              borderRadius: 'var(--rounded-md)', height: '42px', overflow: 'hidden'
             }}>
-              {CATEGORIES.map((cat) => {
-                const IconComponent = cat.icon;
-                const isSelected = formData.kategori === cat.key;
-                return (
-                  <button
-                    key={cat.key}
-                    type="button"
-                    onClick={() => setFormData({ ...formData, kategori: cat.key })}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      padding: '10px 6px',
-                      borderRadius: 'var(--rounded-md)',
-                      border: isSelected ? `2px solid ${cat.color}` : '1px solid var(--color-hairline)',
-                      backgroundColor: isSelected ? cat.bg : 'var(--color-canvas)',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                      textAlign: 'center',
-                      boxShadow: isSelected ? '0 1px 3px rgba(0,0,0,0.06)' : 'none'
-                    }}
-                  >
-                    <div style={{
-                      width: '30px', height: '30px', borderRadius: 'var(--rounded-full)',
-                      backgroundColor: isSelected ? cat.color : 'var(--color-surface)',
-                      color: isSelected ? '#ffffff' : cat.color,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      transition: 'all 0.15s ease'
-                    }}>
-                      <IconComponent size={15} />
-                    </div>
-                    <span style={{
-                      fontSize: '12px',
-                      fontWeight: isSelected ? 600 : 500,
-                      color: isSelected ? 'var(--color-ink)' : 'var(--color-slate)',
-                      whiteSpace: 'nowrap'
-                    }}>
-                      {cat.label}
-                    </span>
-                  </button>
-                );
-              })}
+              <span style={{
+                backgroundColor: 'var(--color-surface)', borderRight: '1px solid var(--color-hairline-strong)',
+                padding: '0 14px', height: '100%', display: 'flex', alignItems: 'center',
+                fontWeight: 600, fontSize: '13px', color: 'var(--color-slate)'
+              }}>
+                Rp
+              </span>
+              <input 
+                type="text" 
+                placeholder="0" 
+                required
+                value={formData.nominal} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, nominal: handleMoneyInput(e.target.value) })} 
+                style={{
+                  flex: 1, height: '100%', border: 'none', outline: 'none',
+                  padding: '0 12px', fontSize: '15px', fontWeight: 600,
+                  fontFamily: 'inherit', color: 'var(--color-ink)', backgroundColor: 'transparent'
+                }}
+              />
+            </div>
+
+            {/* Tombol Cepat Tambah Nominal */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+              {QUICK_AMOUNTS.map((amt) => (
+                <button
+                  key={amt}
+                  type="button"
+                  onClick={() => addQuickAmount(amt)}
+                  style={{
+                    fontSize: '11px', fontWeight: 500,
+                    backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-hairline)',
+                    borderRadius: 'var(--rounded-full)', padding: '3px 10px',
+                    color: 'var(--color-slate)', cursor: 'pointer', transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-surface-soft)';
+                    e.currentTarget.style.borderColor = 'var(--color-hairline-strong)';
+                    e.currentTarget.style.color = 'var(--color-ink)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-surface)';
+                    e.currentTarget.style.borderColor = 'var(--color-hairline)';
+                    e.currentTarget.style.color = 'var(--color-slate)';
+                  }}
+                >
+                  +{amt >= 1000000 ? `${amt / 1000000} jt` : `${amt / 1000} rb`}
+                </button>
+              ))}
+              {formData.nominal && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, nominal: '' })}
+                  style={{
+                    fontSize: '11px', fontWeight: 500,
+                    backgroundColor: 'transparent', border: 'none',
+                    color: '#dc2626', padding: '3px 6px', cursor: 'pointer'
+                  }}
+                >
+                  Reset
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Baris 3: Keterangan */}
+          {/* Baris 3: Keterangan / Keperluan */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
               <FileText size={14} color="var(--color-steel)" /> Keterangan / Keperluan
@@ -361,7 +451,7 @@ export const ExpensePage: React.FC = () => {
             <div style={{
               display: 'flex', alignItems: 'center',
               backgroundColor: 'var(--color-canvas)', border: '1px solid var(--color-hairline-strong)',
-              borderRadius: 'var(--rounded-md)', height: '40px', overflow: 'hidden'
+              borderRadius: 'var(--rounded-md)', height: '42px', overflow: 'hidden'
             }}>
               <input 
                 type="text" 
@@ -379,12 +469,12 @@ export const ExpensePage: React.FC = () => {
           </div>
 
           {/* Tombol Simpan */}
-          <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'flex-end' }}>
             <Button 
               type="submit" 
               disabled={loading || !formData.nominal || !formData.keterangan} 
               variant="primary"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', height: '40px', padding: '0 22px' }}
             >
               {loading ? (
                 <>
@@ -410,15 +500,17 @@ export const ExpensePage: React.FC = () => {
           backgroundColor: 'rgba(5, 0, 56, 0.45)',
           backdropFilter: 'blur(4px)',
           display: 'flex',
-          alignItems: 'center',
+          /* Mobile: sheet style (bawah), Desktop: tengah */
+          alignItems: 'flex-end',
           justifyContent: 'center',
           zIndex: 1100,
-          padding: '20px'
+          padding: '0'
         }}>
           <div style={{
             backgroundColor: 'var(--color-canvas)',
-            borderRadius: 'var(--rounded-xl)',
+            borderRadius: 'var(--rounded-xl) var(--rounded-xl) 0 0',
             padding: '28px',
+            paddingBottom: 'max(28px, env(safe-area-inset-bottom))',
             width: '100%',
             maxWidth: '440px',
             boxShadow: 'var(--shadow-modal)',
@@ -491,10 +583,10 @@ export const ExpensePage: React.FC = () => {
             </div>
 
             {/* Tombol Aksi */}
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
               <Button
                 variant="secondary"
-                style={{ flex: 1, justifyContent: 'center', height: '38px' }}
+                style={{ flex: 1, minWidth: '140px', justifyContent: 'center', height: '38px' }}
                 onClick={() => setShowConfirm(false)}
                 disabled={loading}
               >
@@ -502,7 +594,7 @@ export const ExpensePage: React.FC = () => {
               </Button>
               <Button
                 variant="primary"
-                style={{ flex: 1.2, justifyContent: 'center', height: '38px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                style={{ flex: 1.2, minWidth: '160px', justifyContent: 'center', height: '38px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 onClick={handleConfirmedSubmit}
                 disabled={loading}
               >

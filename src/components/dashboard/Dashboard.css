@@ -1,47 +1,94 @@
 .stat-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xxl);
 }
 
+@media (min-width: 640px) {
+  .stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .stat-row {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
 .stat-label {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   margin-bottom: var(--spacing-sm);
   opacity: 0.9;
 }
 
 .stat-value {
-  font-size: 32px;
+  font-size: clamp(22px, 5vw, 32px);
   font-weight: 600;
   letter-spacing: -1px;
 }
 
-/* Tabel */
+/* ─── Project Table Card ─────────────────────────────────── */
 .project-table-card {
-  overflow: hidden; /* agar tabel tidak keluar radius */
-  padding: 0 !important; /* overide padding default card */
+  overflow: hidden;
+  padding: 0 !important;
 }
 
+/* Header tabel: title + actions */
 .table-header-row {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
   border-bottom: 1px solid var(--color-hairline-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .table-header-row {
+    padding: var(--spacing-xl);
+  }
 }
 
 .table-header-row h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
+/* Actions di header tabel: wrap ke bawah di mobile */
+.table-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Tombol + Proyek Baru full-width di mobile kecil */
+@media (max-width: 479px) {
+  .table-header-actions {
+    width: 100%;
+  }
+  .table-new-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Container tabel dengan horizontal scroll */
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .miro-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  /* Pastikan tabel tidak squeeze terlalu kecil */
+  min-width: 560px;
 }
 
 .miro-table th {
@@ -51,21 +98,45 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: var(--spacing-sm) var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-bottom: 1px solid var(--color-hairline);
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .miro-table th {
+    padding: var(--spacing-sm) var(--spacing-xl);
+  }
 }
 
 .miro-table td {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: 14px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 13px;
   border-bottom: 1px solid var(--color-hairline-soft);
+}
+
+@media (min-width: 768px) {
+  .miro-table td {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 14px;
+  }
 }
 
 .miro-table tr:last-child td {
   border-bottom: none;
 }
 
-/* Utilitas text */
+/* Kolom Pekerjaan disembunyikan di layar kecil */
+.col-pekerjaan {
+  display: none;
+}
+@media (min-width: 768px) {
+  .col-pekerjaan {
+    display: table-cell;
+  }
+}
+
+/* ─── Utilitas text ──────────────────────────────────────── */
 .text-slate { color: var(--color-slate); }
 .text-right { text-align: right; }
 .text-center { text-align: center; }
@@ -77,3 +148,4 @@
   text-overflow: ellipsis;
 }
 .max-w-\[200px\] { max-width: 200px; }
+

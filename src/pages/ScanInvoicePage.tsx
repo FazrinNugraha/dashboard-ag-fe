@@ -338,7 +338,7 @@ export const ScanInvoicePage: React.FC = () => {
             </div>
 
             {/* Grid Informasi Kunci */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '10px', marginBottom: '16px' }}>
               <div style={{ backgroundColor: 'var(--color-surface-soft)', border: '1px solid var(--color-hairline-soft)', borderRadius: 'var(--rounded-md)', padding: '10px 14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.4px', color: 'var(--color-steel)', marginBottom: '4px' }}>
                   <User size={13} /> Klien
@@ -471,7 +471,7 @@ export const ScanInvoicePage: React.FC = () => {
             )}
 
             {/* Action Bar */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'center', gap: '12px' }}>
               <Button variant="secondary" onClick={clearFile} disabled={saving}>
                 Ganti File
               </Button>
@@ -479,7 +479,7 @@ export const ScanInvoicePage: React.FC = () => {
                 variant="yellow" 
                 onClick={handleSave} 
                 disabled={saving}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '220px', justifyContent: 'center' }}
               >
                 {saving ? (
                   <>

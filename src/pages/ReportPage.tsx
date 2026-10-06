@@ -61,20 +61,19 @@ export const ReportPage: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '8px', paddingBottom: '32px' }}>
-      {/* Bar Filter Terpadu (Satu Garis Horizontal) */}
-      <Card variant="base" style={{ padding: '16px 20px', marginBottom: '20px' }}>
+      {/* Filter Bar Terpadu */}
+      <Card variant="base" style={{ padding: '16px', marginBottom: '20px' }}>
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '14px'
+          flexDirection: 'column',
+          gap: '12px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               width: '34px', height: '34px', borderRadius: 'var(--rounded-full)',
               backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-hairline)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-ink)'
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-ink)',
+              flexShrink: 0
             }}>
               <Calendar size={16} />
             </div>
@@ -88,7 +87,8 @@ export const ReportPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Controls: wrap di mobile */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <Select
               value={period}
               onChange={setPeriod}
@@ -141,10 +141,10 @@ export const ReportPage: React.FC = () => {
         </div>
       </Card>
 
-      {/* Grid 3 Kartu Berdampingan (Kesamping, Compact & Clean) */}
+      {/* Grid kartu: 1 kolom di mobile, auto-fit di sm+ */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
         gap: '16px'
       }}>
         {/* Kartu 1: Laporan Excel */}

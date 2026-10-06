@@ -84,13 +84,21 @@ export const ReceivablesPage: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '8px', paddingBottom: '40px' }}>
-      <Card variant="yellow" style={{ padding: 'var(--spacing-xxl)', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
-        <div>
+      {/* Banner piutang */}
+      <Card variant="yellow" style={{
+        padding: 'var(--spacing-xl)',
+        marginBottom: '24px',
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: '16px'
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 500, marginBottom: '4px', opacity: 0.85 }}>
             <Clock size={16} />
             Total Sisa Piutang Keseluruhan
           </div>
-          <div style={{ fontSize: '40px', fontWeight: 500, letterSpacing: '-1px', lineHeight: 1.15 }}>
+          <div style={{ fontSize: 'clamp(26px, 6vw, 40px)', fontWeight: 500, letterSpacing: '-1px', lineHeight: 1.15 }}>
             {formatRp(displayTotal)}
           </div>
           <div style={{ fontSize: '13px', marginTop: '8px', opacity: 0.75 }}>
@@ -98,17 +106,17 @@ export const ReceivablesPage: React.FC = () => {
           </div>
         </div>
         <div style={{
-          width: '56px', height: '56px', borderRadius: 'var(--rounded-full)',
+          width: '48px', height: '48px', borderRadius: 'var(--rounded-full)',
           backgroundColor: 'rgba(255,255,255,0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
         }}>
-          <Clock size={28} color="var(--color-primary)" />
+          <Clock size={24} color="var(--color-primary)" />
         </div>
       </Card>
 
-      {/* Filter + Segarkan: di bawah banner piutang */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-ink)' }}>Rincian Tagihan per Klien</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      {/* Filter + Segarkan */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', marginBottom: '24px', justifyContent: 'space-between' }}>
+        <h3 style={{ fontSize: 'clamp(15px, 3vw, 18px)', fontWeight: 600, color: 'var(--color-ink)' }}>Rincian Tagihan per Klien</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <Select
             value={monthFilter}
             onChange={setMonthFilter}
@@ -136,7 +144,7 @@ export const ReceivablesPage: React.FC = () => {
           <p style={{ color: 'var(--color-slate)' }}>Tidak ada piutang yang tertunggak{monthFilter ? ' pada bulan ini' : ''}.</p>
         </Card>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
           {filteredReceivables.map((item, idx) => {
             const isLate = item.umur_hari > 30;
             return (
@@ -187,12 +195,19 @@ export const ReceivablesPage: React.FC = () => {
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(5, 0, 56, 0.45)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-          padding: '20px'
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'center',
+          zIndex: 1000,
         }}>
           <div style={{
-            backgroundColor: 'var(--color-canvas)', borderRadius: 'var(--rounded-xl)', padding: 'var(--spacing-xxl)',
-            width: '100%', maxWidth: '400px', boxShadow: 'var(--shadow-modal)'
+            backgroundColor: 'var(--color-canvas)',
+            borderRadius: 'var(--rounded-xl) var(--rounded-xl) 0 0',
+            padding: 'var(--spacing-xxl)',
+            paddingBottom: 'max(var(--spacing-xxl), env(safe-area-inset-bottom))',
+            width: '100%',
+            maxWidth: '440px',
+            boxShadow: 'var(--shadow-modal)'
           }}>
             <div style={{ fontSize: '48px', color: 'var(--color-primary)', marginBottom: '16px', textAlign: 'center' }}>
               <i className="ph ph-hand-coins"></i>

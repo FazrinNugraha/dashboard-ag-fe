@@ -70,12 +70,23 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
       backgroundColor: 'rgba(5, 0, 56, 0.45)', 
       backdropFilter: 'blur(4px)',
       display: 'flex', 
-      alignItems: 'center', 
+      /* Mobile: align bottom (sheet feel), Desktop: center */
+      alignItems: 'flex-end',
       justifyContent: 'center', 
       zIndex: 1000,
-      padding: '20px'
+      padding: '0',
     }}>
-      <Card variant="base" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', padding: 'var(--spacing-xxl)', boxShadow: 'var(--shadow-modal)' }}>
+      <Card variant="base" style={{
+        width: '100%',
+        maxWidth: '600px',
+        /* Mobile: tall sheet, Desktop: bounded */
+        maxHeight: '95dvh',
+        overflowY: 'auto',
+        padding: 'var(--spacing-xl)',
+        paddingBottom: 'max(var(--spacing-xl), env(safe-area-inset-bottom))',
+        boxShadow: 'var(--shadow-modal)',
+        borderRadius: 'var(--rounded-xl) var(--rounded-xl) 0 0',
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 500 }}>Tambah Proyek Baru</h2>
           <button onClick={onClose} aria-label="Tutup" style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'var(--color-slate)', lineHeight: 1 }}>&times;</button>
@@ -88,7 +99,8 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
         )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          {/* Grid 1 kolom di mobile, 2 kolom di sm+ */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>ID Proyek (Invoice)</label>
               <Input type="text" value={formData.id_proyek} onChange={e => setFormData({...formData, id_proyek: e.target.value})} required />
@@ -114,7 +126,7 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
             <Input type="text" placeholder="Pemasangan Kusen 4 Pintu" value={formData.pekerjaan} onChange={e => setFormData({...formData, pekerjaan: e.target.value})} required />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '16px', marginTop: '8px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Subtotal (Rp)</label>
               <Input type="text" placeholder="5.000.000" value={formData.subtotal} onChange={e => setFormData({...formData, subtotal: handleMoneyInput(e.target.value)})} required />
@@ -131,9 +143,9 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
             <p style={{ fontSize: '12px', color: 'var(--color-slate)', marginTop: '4px' }}>Jika langsung lunas, masukkan nominal sama dengan (Subtotal - Diskon).</p>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
-            <Button type="button" variant="secondary" onClick={onClose}>Batal</Button>
-            <Button type="submit" variant="primary" disabled={loading}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
+            <Button type="button" variant="secondary" onClick={onClose} style={{ width: '100%', justifyContent: 'center' }}>Batal</Button>
+            <Button type="submit" variant="primary" disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
               {loading ? 'Menyimpan...' : 'Simpan Proyek'}
             </Button>
           </div>
