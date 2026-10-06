@@ -4,7 +4,6 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { API_BASE } from '../../lib/api';
 import { parseRupiah, handleMoneyInput } from '../../lib/currency';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 interface NewProjectModalProps {
   onClose: () => void;
@@ -24,8 +23,6 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  // Desktop: modal terpusat; mobile: bottom-sheet.
-  const isDesktop = useMediaQuery('(min-width: 768px)');
   // Kunci idempotency per sesi modal: cegah proyek tercatat dobel saat retry.
   const [idemKey] = useState(() => crypto.randomUUID());
 
@@ -73,22 +70,21 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({ onClose }) => 
       backgroundColor: 'rgba(5, 0, 56, 0.45)', 
       backdropFilter: 'blur(4px)',
       display: 'flex', 
-      /* Mobile: bottom sheet; Desktop: terpusat */
-      alignItems: isDesktop ? 'center' : 'flex-end',
+      /* Modal selalu terpusat (mobile & desktop) */
+      alignItems: 'center',
       justifyContent: 'center', 
       zIndex: 1000,
-      padding: isDesktop ? '24px' : '0',
+      padding: '24px',
     }}>
       <Card variant="base" style={{
         width: '100%',
         maxWidth: '600px',
-        /* Mobile: tall sheet, Desktop: bounded */
-        maxHeight: '95dvh',
+        maxHeight: '90dvh',
         overflowY: 'auto',
         padding: 'var(--spacing-xl)',
         paddingBottom: 'max(var(--spacing-xl), env(safe-area-inset-bottom))',
         boxShadow: 'var(--shadow-modal)',
-        borderRadius: isDesktop ? 'var(--rounded-xl)' : 'var(--rounded-xl) var(--rounded-xl) 0 0',
+        borderRadius: 'var(--rounded-xl)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-xl)' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 500 }}>Tambah Proyek Baru</h2>

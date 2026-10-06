@@ -5,7 +5,6 @@ import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
 import { Clock } from 'lucide-react';
 import { API_BASE } from '../lib/api';
-import { useMediaQuery } from '../hooks/useMediaQuery';
 
 export const ReceivablesPage: React.FC = () => {
   const [data, setData] = useState<{ data: any[], total_piutang: number, jumlah_klien: number } | null>(null);
@@ -13,8 +12,6 @@ export const ReceivablesPage: React.FC = () => {
   const [monthFilter, setMonthFilter] = useState(''); // Default kosong (Lihat Semua)
   const [payoffModal, setPayoffModal] = useState<{ isOpen: boolean, idProyek: string, namaKlien: string, sisa: number, idemKey: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // Desktop: modal terpusat; mobile: bottom-sheet.
-  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
     fetch(`${API_BASE}/receivables`, { credentials: 'include' })
@@ -199,19 +196,19 @@ export const ReceivablesPage: React.FC = () => {
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(5, 0, 56, 0.45)', backdropFilter: 'blur(4px)',
           display: 'flex',
-          alignItems: isDesktop ? 'center' : 'flex-end',
+          alignItems: 'center',
           justifyContent: 'center',
-          padding: isDesktop ? '24px' : '0',
+          padding: '24px',
           zIndex: 1000,
         }}>
           <div style={{
             backgroundColor: 'var(--color-canvas)',
-            borderRadius: isDesktop ? 'var(--rounded-xl)' : 'var(--rounded-xl) var(--rounded-xl) 0 0',
+            borderRadius: 'var(--rounded-xl)',
             padding: 'var(--spacing-xxl)',
             paddingBottom: 'max(var(--spacing-xxl), env(safe-area-inset-bottom))',
             width: '100%',
-            maxWidth: isDesktop ? '440px' : '480px',
-            maxHeight: isDesktop ? '90dvh' : '92dvh',
+            maxWidth: '440px',
+            maxHeight: '90dvh',
             overflowY: 'auto',
             boxShadow: 'var(--shadow-modal)'
           }}>
