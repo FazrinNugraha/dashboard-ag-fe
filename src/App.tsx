@@ -10,6 +10,7 @@ import { ScanInvoicePage } from './pages/ScanInvoicePage';
 import { LoginPage } from './pages/LoginPage';
 import { ReportPage } from './pages/ReportPage';
 import { ReceivablesPage } from './pages/ReceivablesPage';
+import { LoadingScreen } from './components/ui/LoadingScreen';
 import { format } from 'date-fns';
 
 function App() {
@@ -134,7 +135,7 @@ function App() {
   };
 
   if (isAuthenticated === null) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Memuat...</div>;
+    return <LoadingScreen />;
   }
 
   if (isAuthenticated === false) {
