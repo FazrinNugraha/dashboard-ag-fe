@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { API_BASE } from '../lib/api';
+import { Select } from '../components/ui/Select';
+import { useProjects } from '../hooks/useApi';
 import { parseRupiah, handleMoneyInput, formatRupiah } from '../lib/currency';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -21,7 +23,8 @@ import {
   ShieldCheck,
   ChevronDown,
   Check,
-  Tag
+  Tag,
+  FolderKanban
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -83,8 +86,19 @@ export const ExpensePage: React.FC = () => {
     tanggal: new Date().toISOString().split('T')[0],
     kategori: 'BAHAN_BAKU',
     keterangan: '',
-    nominal: ''
+    nominal: '',
+    id_proyek: '' // '' = pengeluaran umum (tanpa proyek)
   }));
+
+  // Daftar proyek untuk dropdown (semua bulan)
+  const { projects } = useProjects('', true, 'expense-form');
+  const projectOptions = [
+    { value: '', label: 'Tanpa proyek (pengeluaran umum)' },
+    // Label memuat nomor invoice + klien + status, jadi bisa dicari dengan salah satunya
+    ...projects.map((p: any) => ({ value: p.id_proyek, label: `${p.id_proyek} – ${p.nama_klien} (${p.status_bayar})` })),
+  ];
+  const selectedProjectLabel =
+    projectOptions.find(o => o.value === formData.id_proyek)?.label ?? 'Tanpa proyek (pengeluaran umum)';
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -135,7 +149,8 @@ export const ExpensePage: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        nominal: parseRupiah(formData.nominal) || 0
+        nominal: parseRupiah(formData.nominal) || 0,
+        id_proyek: formData.id_proyek || null // null = umum
       };
 
       const res = await fetch(`${API_BASE}/expenses`, {
@@ -443,6 +458,21 @@ export const ExpensePage: React.FC = () => {
             </div>
           </div>
 
+          {/* Proyek (opsional): kosongkan untuk pengeluaran umum seperti listrik/wifi/upah umum */}
+          <div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
+              <FolderKanban size={14} color="var(--color-steel)" /> Proyek (opsional)
+            </label>
+            <Select
+              value={formData.id_proyek}
+              onChange={(v: string) => setFormData({ ...formData, id_proyek: v })}
+              placeholder="Tanpa proyek (pengeluaran umum)"
+              searchable
+              searchPlaceholder="Cari nama klien atau nomor invoice..."
+              options={projectOptions}
+            />
+          </div>
+
           {/* Baris 3: Keterangan / Keperluan */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '13px', fontWeight: 500, color: 'var(--color-ink)' }}>
@@ -574,6 +604,11 @@ export const ExpensePage: React.FC = () => {
                 }}>
                   {selectedCat.label}
                 </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', gap: '12px' }}>
+                <span style={{ color: 'var(--color-slate)' }}>Proyek</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-ink)', textAlign: 'right' }}>{selectedProjectLabel}</span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '13px' }}>
