@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ProjectExpenseDetail } from './ProjectExpenseDetail';
 import { Card } from '../ui/Card';
 import { Select } from '../ui/Select';
 import { format } from 'date-fns';
@@ -12,7 +13,10 @@ import {
   Layers,
   Coins,
   CheckCircle2,
-  Inbox
+  Inbox,
+  TrendingUp,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -44,6 +48,9 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
   onFilterMonthChange,
   onAddProject,
 }) => {
+  // id_proyek yang rincian pengeluarannya sedang dibuka (null = semua tertutup)
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
   const formatRp = (num: number) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 
@@ -110,6 +117,18 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
                   Nilai Proyek
                 </span>
               </th>
+              <th className="text-right">
+                <span className="th-content-right">
+                  <Coins size={12} className="th-icon" />
+                  Pengeluaran
+                </span>
+              </th>
+              <th className="text-right">
+                <span className="th-content-right">
+                  <TrendingUp size={12} className="th-icon" />
+                  Laba Bersih
+                </span>
+              </th>
               <th className="text-center">
                 <span className="th-content-center">
                   <CheckCircle2 size={12} className="th-icon" />
@@ -121,10 +140,18 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
           <tbody>
             {projects.map((p) => {
               const isLunas = p.status_bayar === 'LUNAS';
+              const isOpen = expandedId === p.id_proyek;
+              // Laba negatif = proyek rugi (pengeluaran melebihi nilai proyek)
+              const isLoss = (p.laba_bersih ?? 0) < 0;
               return (
-                <tr key={p.id_proyek}>
+                <React.Fragment key={p.id_proyek}>
+                <tr
+                  onClick={() => setExpandedId(isOpen ? null : p.id_proyek)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <td>
                     <span className="invoice-chip">
+                      {isOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                       <FileText size={12} className="invoice-chip-icon" />
                       {p.id_proyek}
                     </span>
@@ -143,6 +170,17 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
                   <td className="text-right">
                     <span className="td-nominal">{formatRp(p.nilai_proyek)}</span>
                   </td>
+                  <td className="text-right">
+                    <span className="td-nominal">{formatRp(p.total_pengeluaran ?? 0)}</span>
+                  </td>
+                  <td className="text-right">
+                    <span className="td-nominal" style={{ color: isLoss ? '#dc2626' : '#16a34a', fontWeight: 600 }}>
+                      {formatRp(p.laba_bersih ?? p.nilai_proyek)}
+                    </span>
+                    {p.margin_pct != null && (
+                      <div style={{ fontSize: '11px', color: isLoss ? '#dc2626' : '#16a34a' }}>{p.margin_pct}%</div>
+                    )}
+                  </td>
                   <td className="text-center">
                     <span className={`status-pill ${isLunas ? 'status-pill-lunas' : 'status-pill-dp'}`}>
                       <span className={`status-dot ${isLunas ? 'status-dot-lunas' : 'status-dot-dp'}`} />
@@ -150,11 +188,19 @@ export const ProjectTable: React.FC<ProjectTableProps> = ({
                     </span>
                   </td>
                 </tr>
+                {isOpen && (
+                  <tr>
+                    <td colSpan={8} style={{ backgroundColor: 'var(--color-surface)', padding: '12px 20px' }}>
+                      <ProjectExpenseDetail idProyek={p.id_proyek} />
+                    </td>
+                  </tr>
+                )}
+                </React.Fragment>
               );
             })}
             {projects.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center py-8">
+                <td colSpan={8} className="text-center py-8">
                   <div className="table-empty-state">
                     <div className="table-empty-icon">
                       <Inbox size={24} />

@@ -33,7 +33,12 @@ export function useDashboard(month: string, enabled = true) {
   return { data, loading, error };
 }
 
-export function useProjects(month: string, enabled = true) {
+/**
+ * Daftar proyek (sudah termasuk total_pengeluaran, laba_bersih, margin_pct dari backend).
+ * `refreshKey` (mis. tab aktif) memicu fetch ulang agar data tidak basi
+ * setelah ada pengeluaran baru.
+ */
+export function useProjects(month: string, enabled = true, refreshKey: string = '') {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,10 +50,11 @@ export function useProjects(month: string, enabled = true) {
       setLoading(true);
       try {
         // Jika month kosong, ambil semua. Jika ada, filter.
-        // page_size=100 untuk mengambil semua data (backend default hanya 20/halaman)
+        // page_size=500 (batas maksimal backend) agar semua proyek terambil;
+        // default backend hanya 20/halaman. Lebih dari 500 perlu pencarian lewat server.
         const url = month
-          ? `${API_BASE}/projects?month=${month}&page_size=100`
-          : `${API_BASE}/projects?page_size=100`;
+          ? `${API_BASE}/projects?month=${month}&page_size=500`
+          : `${API_BASE}/projects?page_size=500`;
         const res = await fetch(url, { credentials: 'include' });
         const json = await res.json();
         if (!cancelled) setProjects(json.data || []);
@@ -63,7 +69,7 @@ export function useProjects(month: string, enabled = true) {
     return () => {
       cancelled = true;
     };
-  }, [month, enabled]);
+  }, [month, enabled, refreshKey]);
 
   return { projects, loading };
 }

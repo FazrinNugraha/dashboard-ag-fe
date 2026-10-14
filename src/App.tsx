@@ -55,7 +55,7 @@ function App() {
   // Ambil data dari backend (hanya setelah login, agar tidak kena 401)
   const isAuthed = isAuthenticated === true;
   const { data: dashboardData, loading: dashLoading, error: dashError } = useDashboard(currentMonth, isAuthed);
-  const { projects } = useProjects(projectMonth, isAuthed);
+  const { projects } = useProjects(projectMonth, isAuthed, activeTab);
 
   // Judul + deskripsi per tab (ditampilkan sejajar dengan Sinkronkan Sheets di header)
   const pageMeta: Record<string, { title: string; subtitle: string }> = {
