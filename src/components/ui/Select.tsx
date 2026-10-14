@@ -13,6 +13,10 @@ interface SelectProps {
   options: SelectOption[];
   placeholder?: string;
   className?: string;
+  /** Tampilkan kotak cari di atas daftar (untuk daftar panjang, mis. proyek). */
+  searchable?: boolean;
+  /** Teks bantuan di kotak cari. */
+  searchPlaceholder?: string;
 }
 
 /**
@@ -27,9 +31,13 @@ export const Select: React.FC<SelectProps> = ({
   options,
   placeholder = 'Pilih...',
   className = '',
+  searchable = false,
+  searchPlaceholder = 'Cari...',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropUp, setDropUp] = useState(false);
+  // Kata kunci pencarian (hanya dipakai bila searchable)
+  const [query, setQuery] = useState('');
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -60,7 +68,11 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   useEffect(() => {
-    if (!isOpen) return;
+    // Saat menu tertutup, kosongkan kata kunci agar pembukaan berikutnya bersih
+    if (!isOpen) {
+      setQuery('');
+      return;
+    }
 
     updatePosition();
 
@@ -92,6 +104,16 @@ export const Select: React.FC<SelectProps> = ({
     };
   }, [isOpen]);
 
+  // Opsi yang cocok dengan kata kunci. Opsi bernilai '' (pilihan default seperti
+  // "Tanpa proyek") selalu tampil agar tidak hilang saat mencari.
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredOptions =
+    searchable && normalizedQuery
+      ? options.filter(
+          (opt) => opt.value === '' || opt.label.toLowerCase().includes(normalizedQuery)
+        )
+      : options;
+
   return (
     <>
       <button
@@ -121,7 +143,24 @@ export const Select: React.FC<SelectProps> = ({
           style={menuStyle}
           role="listbox"
         >
-          {options.map((opt) => (
+          {searchable && (
+            <input
+              type="text"
+              autoFocus
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={searchPlaceholder}
+              aria-label={searchPlaceholder}
+              style={{
+                position: 'sticky', top: 0, width: '100%', boxSizing: 'border-box',
+                padding: '8px 10px', marginBottom: '4px', fontSize: '13px',
+                fontFamily: 'inherit', outline: 'none',
+                border: '1px solid var(--color-hairline-strong)',
+                borderRadius: 'var(--rounded-md)', backgroundColor: 'var(--color-canvas)',
+              }}
+            />
+          )}
+          {filteredOptions.map((opt) => (
             <button
               key={opt.value}
               type="button"
@@ -136,6 +175,11 @@ export const Select: React.FC<SelectProps> = ({
               {opt.label}
             </button>
           ))}
+          {searchable && filteredOptions.length === 0 && (
+            <div style={{ padding: '10px', fontSize: '13px', color: 'var(--color-slate)' }}>
+              Tidak ditemukan.
+            </div>
+          )}
         </div>,
         document.body
       )}
