@@ -46,25 +46,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'var(--color-surface)' 
+      backgroundColor: 'var(--color-surface)'
     }}>
       <Card variant="base" style={{ width: '100%', maxWidth: '400px', padding: '40px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <img 
-            src="/logo-icon.png" 
-            alt="Logo Agungjaya Aluminium" 
-            style={{ 
-              height: '48px', 
-              width: 'auto', 
+          <img
+            src="/logo-icon.png"
+            alt="Logo Agungjaya Aluminium"
+            style={{
+              height: '48px',
+              width: 'auto',
               objectFit: 'contain',
               margin: '0 auto 16px',
               display: 'block'
-            }} 
+            }}
           />
           <h1 style={{ fontSize: '24px', fontWeight: 600 }}>Masuk ke Dashboard</h1>
           <p style={{ color: 'var(--color-slate)', marginTop: '8px', fontWeight: 600, letterSpacing: '0.5px' }}>AGUNGJAYA ALUMINIUM</p>
@@ -79,10 +79,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
 
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Username</label>
-            <Input 
-              type="text" 
+            <Input
+              type="text"
               required
-              placeholder="Fazrin / Nugraha"
+              placeholder="Masukan Usename"
               value={username}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
             />
@@ -90,8 +90,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
 
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Kata Sandi</label>
-            <Input 
-              type="password" 
+            <Input
+              type="password"
               required
               placeholder="Masukkan kata sandi"
               value={password}
